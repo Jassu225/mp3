@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-toolbar color="cyan" dark tabs>
+    <v-toolbar color="black" dark tabs>
       <v-toolbar-side-icon></v-toolbar-side-icon>
 
-      <v-toolbar-title>Page title</v-toolbar-title>
+      <v-toolbar-title>Mp3 Player</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -11,28 +11,26 @@
         <v-icon>search</v-icon>
       </v-btn>
 
-      <v-btn icon>
-        <v-icon>more_vert</v-icon>
-      </v-btn>
+      <more-menu></more-menu>
 
       <v-tabs
         slot="extension"
         v-model="tab"
-        color="cyan"
+        color="black"
         align-with-title
       >
         <v-tabs-slider color="yellow"></v-tabs-slider>
 
-        <v-tab v-for="item in items" :key="item">
+        <v-tab v-for="item in menuItems" :key="item">
           {{ item }}
         </v-tab>
       </v-tabs>
     </v-toolbar>
 
     <v-tabs-items v-model="tab">
-      <v-tab-item v-for="item in items" :key="item">
+      <v-tab-item>
         <v-card flat>
-          <v-card-text>{{ text }}</v-card-text>
+          <songs-container></songs-container>
         </v-card>
       </v-tab-item>
     </v-tabs-items>
@@ -40,16 +38,22 @@
 </template>
 
 <script>
+import songsContainer from './songsContainer.vue';
+import moreMenu from './moreMenu.vue';
+
 export default {
-    data () {
-      return {
-        tab: null,
-        items: [
-          'web', 'shopping', 'videos', 'images', 'news'
-        ],
-        text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-      }
+  data () {
+    return {
+      tab: null,
+      menuItems: [
+        'Songs', 'Album', 'Artists', 'Playlists', 'About Us', 'Contact Us', 'Donate Us'
+      ]
     }
+  },
+  components: {
+    songsContainer,
+    moreMenu
+  }
 }
 </script>
 
