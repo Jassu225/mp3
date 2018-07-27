@@ -10,11 +10,13 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
+    "bluebird": "^3.5.1",
     "level-js": "^3.0.0",
     "linvodb3": "^3.25.2",
     "material-design-icons-iconfont": "^3.0.3",
     "vue": "^2.5.11",
     "vue-masonry": "^0.11.4",
+    "vue-router": "^3.0.1",
     "vuetify": "^1.1.8",
     "vuex": "^3.0.1"
   },

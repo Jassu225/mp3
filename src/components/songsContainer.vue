@@ -13,6 +13,8 @@
 
 <script>
 import songBlock from './songBlock.vue';
+import {mutationTypes} from '../assets/js/constants';
+
 export default {
     data: function() {
         return {
