@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="songs.length" v-masonry transition-duration="0.3s" item-selector=".item">
+        <div v-if="songs && songs.length" v-masonry transition-duration="0.3s" item-selector=".item">
             <div v-masonry-tile class="item" v-for="(song, index) in songs" :key="index">
                 <song-block :song="song"></song-block>
             </div>
@@ -13,18 +13,23 @@
 
 <script>
 import songBlock from './songBlock.vue';
-import {mutationTypes} from '../assets/js/constants';
+import {mutationTypes, actionTypes} from '../assets/js/constants';
 
 export default {
     data: function() {
         return {
-            songs: [
-                
-            ]
         };
     },
     components: {
         songBlock
+    },
+    computed: {
+        songs: function() {
+            return this.$store.songs;
+        }
+    },
+    mounted: function() {
+        // this.$store.dispatch(actionTypes.GET_SONGS);
     }
 }
 </script>

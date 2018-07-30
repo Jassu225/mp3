@@ -2,17 +2,6 @@
   <v-layout
     wrap
   >
-    <!-- <v-container>
-      <v-layout justify-center>
-        <v-btn
-          color="pink"
-          dark
-          @click.stop="drawer = !drawer"
-        >
-          Toggle
-        </v-btn>
-      </v-layout>
-    </v-container> -->
 
     <v-navigation-drawer
       v-model="toggleDrawer"
@@ -46,9 +35,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile
-          @click="navigateToFileUpload()"
-        >
+        <v-list-tile>
           <v-list-tile-action>
             <v-icon>{{ items.profile.icon }}</v-icon>
           </v-list-tile-action>
@@ -57,6 +44,20 @@
             <v-list-tile-title>{{ items.profile.title }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+
+        <v-list-tile @click="navigateToUploadProgress">
+          <v-list-tile-action>
+            <v-icon>{{ items.filesUploading.icon }}</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+              <v-container class="no-padding">
+                {{ items.filesUploading.title }}
+                <span class="uploadCount">{{uploadCount}}</span>
+              </v-container>
+          </v-list-tile-content>
+        </v-list-tile>
+
       </v-list>
     </v-navigation-drawer>
   </v-layout>
@@ -66,7 +67,12 @@
 import {sideNavContent} from '../assets/js/constants.js';
 
 export default {
-    props: ['sideNavbar', 'navigateToFileUpload'],
+    props: [
+      'sideNavbar',
+      'navigateToFileUpload',
+      'uploadCount',
+      'navigateToUploadProgress'
+    ],
     data () {
         return {
           items: sideNavContent,
@@ -85,3 +91,17 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.uploadCount {
+  font-size: 1.2rem;
+  float: right;
+  padding: 0 1rem;
+  background-color: #a4e3cc;
+  border-radius: 50%;
+}
+
+.no-padding {
+  padding: 16px 0;
+}
+</style>

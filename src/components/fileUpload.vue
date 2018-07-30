@@ -1,6 +1,5 @@
 <template>
 	<v-card 
-		ref="dropZone" 
 		@drop="dropHandler" 
 		@dragover="dragOverHandler"
 		class="bg drop-zone" 
@@ -8,20 +7,36 @@
 		height="30rem"
 		width="90%"
 	>
-		<v-card-text class="center-text-vertically">
+		<v-card-text class="center-text-vertically" @click="getSongsUsingInput">
 			<h1>Drag and Drop one or more files ....</h1>
 		</v-card-text>
+		
+		<input 
+			type="file" 
+			ref="fileInput" 
+			accept="audio/mp3"
+			@change="sendFiles"
+			multiple
+			hidden
+			name="inputFile"
+		/>
 	</v-card>
 </template>
 
 <script>
-import config from '../config';
-import Promise from 'bluebird';
+import $ from 'jquery';
 
 export default {
+  props: [
+	  'config', 
+	  'uploadProgress', 
+	  'uploadComplete', 
+	  'uploadFailed', 
+	  'uploadCanceled',
+	  'addToUploadingFiles'
+  ],
   data () {
     return {
-      config,
       fileUploaded: null
     }
   },
@@ -50,37 +65,15 @@ export default {
 				console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
 			}
 		} 
-		
 		// Pass event to removeDragData for cleanup
+		this.addToUploadingFiles(files);
 		this.removeDragData(ev);
-		this.readFilesAndUpload(files);
-		// this.uploadFiles(files);
-		// console.log(files);
-	},
-	readFilesAndUpload: function(files) {
-
-		files.forEach(file => {
-			let reader = new FileReader();
-			let uploadFile = this.uploadFile;
-			
-			reader.onload = function(read) {
-				// console.log(file.name);
-				uploadFile({
-					name: file.name,
-					size: file.size,
-					type: file.type,
-					binaryString: reader.result
-				});
-			}
-			reader.readAsBinaryString(file);
-		});
-		
+		this.stratUpload(files);
 	},
 	dragOverHandler: function(event) {
-		console.log('File(s) in drop zone'); 
-
 		// Prevent default behavior (Prevent file from being opened)
 		event.preventDefault();
+		event.dataTransfer.dropEffect = "copy";
 	},
 	removeDragData: function(ev) {
 		console.log('Removing drag data');
@@ -93,43 +86,85 @@ export default {
 			ev.dataTransfer.clearData();
 		}
 	},
-	uploadFile: function(file) {
-		if(file) {
-			// console.log(file);
-			let xhr = new XMLHttpRequest();
-			// let form = new FormData();
-			// form.append("songs", files);
+	stratUpload: function(files) {
+		files.forEach(file => {
+			file.isFirst = true;
+			this.chunkFile(file, 0);
+		});
+	},
+	chunkFile: function(file, start) {
+		// console.log(file);
+		let next_slice = start + this.config.chunkSize + 1;
+		let chunk = file.slice( start, next_slice );
+		this.readChunkAndUpload(chunk, start, file);
+	},
+	readChunkAndUpload: function(chunk, start, file) {
 
+		let reader = new FileReader();
+		let uploadChunk = this.uploadChunk;
+		
+		reader.onloadend = function(read) {
+			chunk.base64String = reader.result;
+			uploadChunk(chunk, start, file);
+		}
+		reader.readAsDataURL(chunk);
+		
+	},
+	uploadChunk: function(chunk, start, file) {
+		console.log(file.isFirst);
+		if(chunk) {
+			
+			let component = this;
+			let xhr = new XMLHttpRequest();
 			/* event listners */
-			xhr.upload.addEventListener("progress", this.uploadProgress, false);
-			xhr.addEventListener("load", this.uploadComplete, false);
-			xhr.addEventListener("error", this.uploadFailed, false);
-			xhr.addEventListener("abort", this.uploadCanceled, false);
+			xhr.addEventListener("load", (event) => {
+				var size_done = start + component.config.chunkSize;
+                // var percent_done = Math.floor( ( size_done / file.size ) * 100 );
+				if ( size_done < file.size ) {
+                    // Update upload progress
+                    this.uploadProgress(file.name, size_done);
+					// More to upload, call function recursively
+					file.isFirst = false;
+                    this.chunkFile(file, size_done );
+                } else {
+                    // Update upload progress
+					
+					this.uploadComplete(file.name);
+                }
+			}, false);
+			xhr.addEventListener("error", (event) => {
+				this.uploadFailed(file.name);
+				console.log(event);
+			}, false);
+			xhr.addEventListener("abort", (event) => {
+				this.uploadCanceled(file.name);
+				console.log(event);
+			}, false);
 			/* Be sure to change the url below to the url of your upload server side script */
 			xhr.open("POST", this.config.uploadSongURL);
-			let strigifiedFile = JSON.stringify(file);
+			let strigifiedFile = JSON.stringify({
+				name: file.name,
+				base64Data: chunk.base64String,
+				isFirst: file.isFirst
+			});
 			// console.log(strigifiedFile);
 			xhr.send(strigifiedFile);
 			
 		}
 	},
-	createFormWithInput: function() {
-		let form = document.createElement("form");
-		let input = document.createElement("input");
-		input.type = "file";
-		form.appendChild(input);
+	getSongsUsingInput: function(event){
+		this.$refs.fileInput.click();
 	},
-	uploadProgress: function(event) {
-		console.log((event.loaded / event.total) * 100);
-	},
-	uploadComplete: function(event) {
-		console.log('upload complete');
-	},
-	uploadFailed: function(event) {
-		console.log('upload failed');
-	},
-	uploadCanceled: function(event) {
-		console.log('upload canceled');
+	sendFiles: function() {
+		let input = this.$refs.fileInput;
+		if ('files' in input) {
+			let files = input.files;
+			if (files.length > 0) {
+				let filesArray = Array.from(files);
+				this.addToUploadingFiles(filesArray);
+				this.stratUpload(filesArray);
+			}
+    	} 
 	}
   }
 }
@@ -145,6 +180,7 @@ export default {
 	margin: 5%;
 	border-radius: 2rem;
 	border: 3px dashed grey;
+	cursor: pointer;
 }
 
 .center-text-vertically {
