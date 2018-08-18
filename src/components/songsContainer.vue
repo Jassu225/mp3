@@ -29,7 +29,7 @@ export default {
         }
     },
     mounted: function() {
-        // this.$store.dispatch(actionTypes.GET_SONGS);
+        this.$store.dispatch(actionTypes.GET_SONGS);
     }
 }
 </script>

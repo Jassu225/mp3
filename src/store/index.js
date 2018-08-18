@@ -16,7 +16,9 @@ const store = new Vuex.Store({
     },
     actions: {
       async [actionTypes.GET_SONGS_FROM_SERVER] ({state}) {
-        await APIHandler.getSongs();
+        let data = await APIHandler.getSongs();
+        console.log(data);
+        state.songs = data.songs;
       },
       async [actionTypes.GET_SONGS] ({ commit, state, dispatch }) {
         await dispatch(actionTypes.GET_SONGS_FROM_SERVER)

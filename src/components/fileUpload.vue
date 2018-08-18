@@ -66,7 +66,7 @@ export default {
 			}
 		} 
 		// Pass event to removeDragData for cleanup
-		this.addToUploadingFiles(files);
+		// this.addToUploadingFiles(files);
 		this.removeDragData(ev);
 		this.stratUpload(files);
 	},
@@ -89,46 +89,64 @@ export default {
 	stratUpload: function(files) {
 		files.forEach(file => {
 			file.isFirst = true;
-			this.chunkFile(file, 0);
+			// this.chunkFile(file, 0);
+			this.readFileAndUploadInChunks(file);
 		});
+	},
+	readFileAndUploadInChunks: function(file) {
+
+		let reader = new FileReader();
+		// let uploadChunk = this.uploadChunk;
+		
+		reader.onloadend = (read) => {
+			file.base64String = reader.result;
+			file.base64Size = file.base64String.length;
+			// file.size = file.base64Size;
+
+			this.addToUploadingFiles([file]);
+			// console.log('event');
+			// Ignoring First 23 chars b'coz
+			// FileReader.readAsDataURL(blob) prefixes the file content with
+			// "data:audio/mpeg;base64," tag which represents that the data
+			// is audio ecoded in base64 format
+			this.chunkFile(file, 23);
+		}
+		reader.readAsDataURL(file);
+		
 	},
 	chunkFile: function(file, start) {
 		// console.log(file);
-		let next_slice = start + this.config.chunkSize + 1;
-		let chunk = file.slice( start, next_slice );
-		this.readChunkAndUpload(chunk, start, file);
-	},
-	readChunkAndUpload: function(chunk, start, file) {
-
-		let reader = new FileReader();
-		let uploadChunk = this.uploadChunk;
-		
-		reader.onloadend = function(read) {
-			chunk.base64String = reader.result;
-			uploadChunk(chunk, start, file);
+		let end = start + this.config.chunkSize;
+		let chunk = {
+			name: file.name,
+			base64Size: file.base64Size,
+			type: file.type,
+			base64String: (file.base64String).slice(start, end),
+			isFirst: file.isFirst
 		}
-		reader.readAsDataURL(chunk);
-		
+		this.uploadChunk(chunk, start, end, file);
 	},
-	uploadChunk: function(chunk, start, file) {
-		console.log(file.isFirst);
+	uploadChunk: function(chunk, start, end, file) {
+		// console.log(chunk);
+		// console.log(start + ' ' + end);
+		// console.log(file.size);
+		// console.log(file.base64Size);
 		if(chunk) {
 			
-			let component = this;
 			let xhr = new XMLHttpRequest();
 			/* event listners */
 			xhr.addEventListener("load", (event) => {
-				var size_done = start + component.config.chunkSize;
+				// var size_done = start + this.config.chunkSize;
                 // var percent_done = Math.floor( ( size_done / file.size ) * 100 );
-				if ( size_done < file.size ) {
+				if ( end < file.base64Size ) {
                     // Update upload progress
-                    this.uploadProgress(file.name, size_done);
+                    this.uploadProgress(file.name, end);
 					// More to upload, call function recursively
 					file.isFirst = false;
-                    this.chunkFile(file, size_done );
+                    this.chunkFile(file, end );
                 } else {
                     // Update upload progress
-					
+					this.sendCompleteRequest(file.name);
 					this.uploadComplete(file.name);
                 }
 			}, false);
@@ -142,15 +160,21 @@ export default {
 			}, false);
 			/* Be sure to change the url below to the url of your upload server side script */
 			xhr.open("POST", this.config.uploadSongURL);
-			let strigifiedFile = JSON.stringify({
-				name: file.name,
-				base64Data: chunk.base64String,
-				isFirst: file.isFirst
-			});
+			let strigifiedChunk = JSON.stringify(chunk);
 			// console.log(strigifiedFile);
-			xhr.send(strigifiedFile);
+			xhr.send(strigifiedChunk);
 			
 		}
+	},
+	sendCompleteRequest: function(fileName) {
+		let xhr = new XMLHttpRequest();
+		xhr.addEventListener("load", (event) => { console.log(event); });
+		xhr.addEventListener("error", (event) => { console.log(event); });
+		xhr.addEventListener("abort", (event) => { console.log(event); });
+		xhr.open("POST", this.config.uploadCompleteURL);
+		xhr.send(JSON.stringify({
+			name: fileName
+		}));
 	},
 	getSongsUsingInput: function(event){
 		this.$refs.fileInput.click();
@@ -161,7 +185,7 @@ export default {
 			let files = input.files;
 			if (files.length > 0) {
 				let filesArray = Array.from(files);
-				this.addToUploadingFiles(filesArray);
+				// this.addToUploadingFiles(filesArray);
 				this.stratUpload(filesArray);
 			}
     	} 

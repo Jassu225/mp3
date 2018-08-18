@@ -116,11 +116,12 @@ export default {
 	  this.removeFromUploadingFiles(fileName);
 	},
 	addToUploadingFiles: function(files) {
+    console.log(files);
 		files.forEach(file => {
 			if(this.getIndex(file.name) == INDEX_NOT_FOUND) {
 				this.uploadingFiles.push({
 					name: file.name,
-					totalSize: file.size,
+					totalSize: file.base64Size,
 					uploadedSize: 0,
 					index: this.uploadingFiles.length
 				});

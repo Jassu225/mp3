@@ -20,6 +20,7 @@ export default class APIHandler {
             });
             
             await res.end;
+            console.log(json);
             return json;
         } catch (e) {
             console.log(e);
