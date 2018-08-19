@@ -2,10 +2,12 @@
 // const country = 'india';
 const apiRootURL = 'http://localhost:7991';
 const config = {
+    apiRootURL,
     uploadSongURL: `${apiRootURL}/uploadSong`,
     uploadCompleteURL: `${apiRootURL}/uploadComplete`,
     getSongsURL: `${apiRootURL}/getSongs`,
     chunkSize: 262144, // 256 KB
+    uploadsDir: '/uploads'
 };
 
 export default config;

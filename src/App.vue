@@ -6,6 +6,7 @@
 
 <script>
 import navbar from './components/navbar.vue';
+import {actionTypes} from './assets/js/constants';
 export default {
   components: {
     navbar
@@ -14,6 +15,9 @@ export default {
     return {
       
     }
+  },
+  mounted: function() {
+    this.$store.dispatch(actionTypes.GET_SONGS);
   }
 }
 </script>

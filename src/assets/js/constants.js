@@ -13,8 +13,17 @@ const actionTypes = {
     GET_SONGS_FROM_SERVER: 'getSongsFromServer'
 }
 
+const AVIcons = {
+    playArrow : 'play_arrow',
+    pause: 'pause',
+    playlistAdd: 'playlist_add',
+    queue: 'queue',
+    playNext: 'queue_play_next'
+}
+
 export {
     sideNavContent,
     mutationTypes,
-    actionTypes
+    actionTypes,
+    AVIcons
 }

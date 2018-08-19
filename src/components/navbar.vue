@@ -21,33 +21,35 @@
       >
         <v-tabs-slider color="white"></v-tabs-slider>
 
-        <v-tab v-for="item in menuItems" :key="item" @click="$router.go(-1); Tabs = true;">
+        <v-tab v-for="item in menuItems" :key="item" @click="Tabs = true;">
           {{ item }}
         </v-tab>
       </v-tabs>
     </v-toolbar>
 
-    <v-tabs-items v-model="tab" v-if="Tabs">
-      <v-tab-item>
-        <v-card flat color="transparent" dark>
-          <songs-container></songs-container>
-        </v-card>
-      </v-tab-item>
-    </v-tabs-items>
-    <div v-else>
-      <router-view 
-        name="fileUpload" 
-        :config="config"
-        :uploadProgress="uploadProgress"
-        :uploadComplete="uploadComplete"
-        :uploadFailed="uploadFailed"
-        :uploadCanceled="uploadCanceled"
-		    :addToUploadingFiles="addToUploadingFiles"
-      ></router-view>
-	  <router-view
-	  	name="uploadProgress"
-		  :uploadingFiles="uploadingFiles"
-	  ></router-view>
+    <div>
+      <v-tabs-items v-model="tab" class="position-absolute" :class="{noOpactiy: !Tabs}">
+        <v-tab-item>
+          <v-card flat color="transparent" dark>
+            <songs-container></songs-container>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
+      <div v-if="!Tabs" class="position-absolute full-width">
+        <router-view 
+          name="fileUpload" 
+          :config="config"
+          :uploadProgress="uploadProgress"
+          :uploadComplete="uploadComplete"
+          :uploadFailed="uploadFailed"
+          :uploadCanceled="uploadCanceled"
+          :addToUploadingFiles="addToUploadingFiles"
+        ></router-view>
+        <router-view
+          name="uploadProgress"
+          :uploadingFiles="uploadingFiles"
+        ></router-view>
+      </div>
     </div>
     <side-nav 
       :sideNavbar="sideNavbar"
@@ -150,5 +152,17 @@ export default {
 
     .v-tabs__bar {
         background-color: transparent !important;
+    }
+    .position-absolute {
+      position: absolute;
+    }
+    .full-width {
+      width: 100%;
+    }
+    .invisible {
+      visibility: hidden;
+    }
+    .noOpactiy {
+      opacity: 0;
     }
 </style>
