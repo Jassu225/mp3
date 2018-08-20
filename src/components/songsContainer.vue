@@ -11,11 +11,15 @@
             <song-block 
                 v-for="(song, index) in songs" 
                 :key="index" 
+                :songIndex="index"
                 :song="song"
                 :pauseAudio="pauseAudio"
+                :isPaused="isPaused"
                 :removeSelectedSong="removeSelectedSong"
                 :selectSong="selectSong"
                 :playAudio="playAudio"
+                :playOrPause="playOrPause"
+                :loadAudio="loadAudio"
             ></song-block>
         </div>
         <div v-else>
@@ -31,8 +35,7 @@ import {mutationTypes} from '../assets/js/constants';
 export default {
     data: function() {
         return {
-            selectedSong : null,
-            audioPlayer: this.$store.state.audioPlayer
+            
         };
     },
     components: {
@@ -41,6 +44,9 @@ export default {
     computed: {
         songs: function() {
             return this.$store.state.songs;
+        },
+        audioPlayer: function() {
+            return this.$store.state.audioPlayer;
         }
     },
     methods: {
@@ -49,23 +55,25 @@ export default {
                 this.audioPlayer.pause();
             // console.log('pause audio');
         },
+        isPaused() {
+            return this.audioPlayer.paused;
+        },
         removeSelectedSong() {
-            
-            if(this.selectedSong) {
-                // change icon
-                this.selectedSong.VueReference.togglePlayPauseSelector();
-                // remove selected song
-                this.selectedSong = null;
-            }
-
+            this.$store.commit(mutationTypes.REMOVE_SELECTED_SONG);
             // console.log('remove selected song');
         },
-        selectSong(song, VueReference, src) {
-            this.selectedSong = song;
-            this.selectedSong.VueReference = VueReference;
-            this.selectedSong.src = src;
+        selectSong(song) {
             // console.log('select new song');
-            this.loadAudio(src);
+            this.$store.commit(mutationTypes.SELECT_SONG, {
+                song
+            });
+            // if same selection, no need to load the audio
+            if(!this.sameSelection()) {
+                // pause Audio
+                this.pauseAudio();
+                // load Audio with new source
+                this.loadAudio(song.src);
+            }
         },
         playAudio() {
             this.audioPlayer.play();
@@ -74,6 +82,19 @@ export default {
             // console.log(src);
             this.audioPlayer.src = src;
             this.audioPlayer.load();
+        },
+        playOrPause() {
+            if(this.isPaused()) {
+                this.playAudio();
+            }
+            else {
+                this.pauseAudio();
+            }
+        },
+        sameSelection() {
+            let previousSelection = this.$store.state.previousSelection;
+            let selectedSong = this.$store.state.selectedSong;
+            return previousSelection && selectedSong && previousSelection._id == selectedSong._id;
         }
     }
 }

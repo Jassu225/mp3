@@ -5,7 +5,9 @@ const sideNavContent = {
 };
 
 const mutationTypes = {
-    GET_TOP_TRACKS: 'getTopTracks'
+    CREATE_AUDIO_PLAYER_REFERENCE: 'createAudioPlayerReference',
+    SELECT_SONG: 'selectSong',
+    SELECT_SONG_BASED_ON_PLAYMODE: 'selectNextSongBasedOnPlayMode'
 }
 
 const actionTypes = {
@@ -21,9 +23,15 @@ const AVIcons = {
     playNext: 'queue_play_next'
 }
 
+const playModes = {
+    // Play index-wise from song Array
+    SEQUENCE: 'sequence'
+}
+
 export {
     sideNavContent,
     mutationTypes,
     actionTypes,
-    AVIcons
+    AVIcons,
+    playModes
 }

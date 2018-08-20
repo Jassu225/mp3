@@ -1,12 +1,20 @@
 <template>
   <v-app>
     <navbar></navbar>
+    <audio 
+      ref="audioPlayer" 
+      class="hidden"
+      @ended="audioEnded"
+      @pause="audioPaused"
+      @play="audioPlaying"
+    ></audio>
   </v-app>
 </template>
 
 <script>
 import navbar from './components/navbar.vue';
-import {actionTypes} from './assets/js/constants';
+import {actionTypes, mutationTypes} from './assets/js/constants';
+
 export default {
   components: {
     navbar
@@ -18,6 +26,23 @@ export default {
   },
   mounted: function() {
     this.$store.dispatch(actionTypes.GET_SONGS);
+    this.$store.commit(mutationTypes.CREATE_AUDIO_PLAYER_REFERENCE, {
+      audioPlayerReference: this.$refs.audioPlayer
+    });
+  },
+  methods: {
+    audioEnded() {
+      this.$store.state.selectedSong.VueReference.AudioEnded();
+      // select next song based on playMode
+      this.$store.commit(mutationTypes.SELECT_SONG_BASED_ON_PLAYMODE);
+    },
+    audioPaused() {
+      if(!this.$refs.audioPlayer.ended)
+        this.$store.state.selectedSong.VueReference.AudioPaused();
+    },
+    audioPlaying() {
+      this.$store.state.selectedSong.VueReference.AudioPlaying();
+    }
   }
 }
 </script>
@@ -50,5 +75,8 @@ li {
 
 a {
   color: #42b983;
+}
+.hidden{
+  display: none;
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
-    <div class="song-block">
+    <div class="song-block" :class="{selected: selected}">
         <div class="song-title" :title="song.title">
             {{ song.title }}
         </div>
         <div class="song-action" @click="playPauseSong()">
-            <v-icon title="play">{{ playPause[playPauseSelector] }}</v-icon>
+            <v-icon title="play">{{ Icons[IconSelector] }}</v-icon>
         </div>
         <div class="song-action">
             <v-icon title="add to queue">{{ AVIcons.queue }}</v-icon>
@@ -39,11 +39,36 @@ export default {
         return {
             AVIcons,
             config,
-            playPause: [AVIcons.playArrow, AVIcons.pause],
-            playPauseSelector: 0
+            Icons: [AVIcons.playArrow, AVIcons.pause],
+            playIconIndex: 0,
+            pauseIconIndex: 1,
+            playPauseSelector: 0,
+            isPlaying: false
         };
     },
-    props: ['song', 'pauseAudio', 'removeSelectedSong', 'selectSong', 'playAudio'],
+    props: [
+        'song', 
+        'songIndex',
+        'pauseAudio', 
+        'removeSelectedSong', 
+        'selectSong', 
+        'playAudio', 
+        'isPaused', 
+        'playOrPause',
+        'loadAudio'
+    ],
+    computed: {
+        selected: function() {
+            let selectedSong = this.$store.state.selectedSong;
+            return selectedSong && selectedSong._id == this.song._id;
+        },
+        IconSelector: function() {
+            if(this.selected && this.isPlaying)
+                return this.pauseIconIndex;
+            else
+                return this.playIconIndex;
+        }
+    },
     methods: {
         getReadableTime(duration) {
             let seconds = duration, minutes = 0, hours = 0;
@@ -66,23 +91,62 @@ export default {
         },
         playPauseSong() {
             // console.log('playPauseSong sequence');
-            // pause Audio player
-            this.pauseAudio();
-            // remove old selection
-            this.removeSelectedSong();
-            // select this song and play
-            this.selectSong(this.song, this, `${this.config.apiRootURL + this.config.uploadsDir}/${this.song.title}`);
-            // play the selected audio source
-            this.playAudio();
-            // change icon
-            this.togglePlayPauseSelector();
+            // if(this.$store.state.selectedSong && (this.$store.state.selectedSong._id == this.song._id)) {
+            //     if(this.isPaused()) {
+            //         this.playAudio();
+            //     } else {
+            //         // pause Audio player
+            //         this.pauseAudio();
+            //     }
+
+            // } else {
+            //     // pause Audio player
+            //     this.pauseAudio();
+            //     // remove old selection
+            //     this.removeSelectedSong();
+            //     // select this song and play
+            //     this.selectSong(this.song, this, `${this.config.apiRootURL + this.config.uploadsDir}/${this.song.title}`);
+            //     // play the selected audio source
+            //     this.playAudio();
+            // }
+
+            // // change icon
+            // this.togglePlayPauseSelector();
 
             // let audio = new Audio(`${this.config.apiRootURL + this.config.uploadsDir}/${this.song.title}`);
             // audio.onloadeddata = () => audio.play();
+
+            // STORE IN STORE
+            this.selectSong(this.song);
+            // play or pause
+            this.playOrPause();
         },
-        togglePlayPauseSelector() {
-            this.playPauseSelector = (this.playPauseSelector + 1) % 2;
+        // These fuctions were called
+        // from App.Vue when the respective
+        // event is fired.
+        AudioEnded() {
+            this.isPlaying = false;
+        },
+        AudioPaused() {
+            this.isPlaying = false;
+        },
+        AudioPlaying() {
+            this.isPlaying = true;
+        },
+        // this function may be called from store
+        // after selecting next song based on playMode
+        LoadAudio() {
+            this.loadAudio(this.song.src);
         }
+    },
+    mounted: function() {
+        // bind songIndex
+        this.song.index = this.songIndex;
+        // bind VueReference
+        this.song.VueReference = this;
+        // bind song Src (URL)
+        this.song.src = `${this.config.apiRootURL + this.config.uploadsDir}/${this.song.title}`;
+        // console.log(this.song.src);
     }
 }
 </script>
@@ -118,5 +182,12 @@ export default {
 
 .full-height {
     height: 3rem;
+}
+
+.selected {
+    color: #51acef;
+}
+.selected .v-icon {
+    color: #51acef !important;
 }
 </style>
