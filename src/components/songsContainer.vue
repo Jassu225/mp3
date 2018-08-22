@@ -22,7 +22,7 @@
                 :loadAudio="loadAudio"
             ></song-block>
         </div>
-        <div v-else>
+        <div v-else class="full-width">
             <h1>No Songs</h1>
         </div>
     </div>
@@ -112,11 +112,18 @@ export default {
     margin: 1rem;
 }
 
+.songs-container {
+    user-select: none;
+}
 .songs-container > :nth-child(even) {
     background-color: #5d5c5c;
 }
 
 .songs-container > :nth-child(odd) {
     background-color: #4d4d4d;
+}
+
+.full-width {
+    width: 100%;
 }
 </style>

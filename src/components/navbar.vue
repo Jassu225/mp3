@@ -28,7 +28,7 @@
     </v-toolbar>
 
     <div>
-      <v-tabs-items v-model="tab" class="position-absolute" :class="{noOpactiy: !Tabs}">
+      <v-tabs-items v-model="tab" class="position-absolute full-width" :class="{noOpactiy: !Tabs}">
         <v-tab-item>
           <v-card flat color="transparent" dark>
             <songs-container></songs-container>
@@ -54,7 +54,7 @@
     <side-nav 
       :sideNavbar="sideNavbar"
       :navigateToFileUpload="navigateToFileUpload"
-	  :navigateToUploadProgress="navigateToUploadProgress"
+	    :navigateToUploadProgress="navigateToUploadProgress"
       :uploadCount="uploadingFiles.length"
     ></side-nav>
   </div>
