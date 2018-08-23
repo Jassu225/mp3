@@ -7,6 +7,13 @@ import APIHandler from './APIHandler';
 Vue.use(Vuex);
 const store = new Vuex.Store({
     state: {
+      // To show and hide side-navbar
+      sideNavbar: false,
+      // To switch between tabs
+      tab: null,
+      //  To check if tabs are shown on screen
+      Tabs: true,
+      // ---------------
       songs: [],
       audioPlayer: null,
       previousSelection: null,
@@ -16,6 +23,18 @@ const store = new Vuex.Store({
       musicControls: null
     },
     mutations: {
+      // to toggle side0navbar
+      [mutationTypes.TOGGLE_SIDENAV] (state,payload) {
+        state.sideNavbar = payload.newValue;
+      },
+      // to switch between tabs
+      [mutationTypes.SWITCH_TABS] (state, payload) {
+        state.tab = payload.newValue;
+      },
+      // to change visibility of tabs
+      [mutationTypes.CHANGE_TABS_VISIBILITY] (state, payload) {
+        state.Tabs = payload.newValue;
+      },
       [mutationTypes.CREATE_AUDIO_PLAYER_REFERENCE] (state, payload) {
         state.audioPlayer = payload.audioPlayerReference;
         // console.log(payload.audioPlayerReference);

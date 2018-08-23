@@ -8,7 +8,13 @@ const mutationTypes = {
     CREATE_AUDIO_PLAYER_REFERENCE: 'createAudioPlayerReference',
     CREATE_MUSIC_CONTROLS_REFERENCE: 'createMusicControlsReference',
     SELECT_SONG: 'selectSong',
-    SELECT_SONG_BASED_ON_PLAYMODE: 'selectNextSongBasedOnPlayMode'
+    SELECT_SONG_BASED_ON_PLAYMODE: 'selectNextSongBasedOnPlayMode',
+    // To change sideNav prop
+    TOGGLE_SIDENAV: 'toggleSidenav',
+    // To switch b/w tabs
+    SWITCH_TABS: 'switchTabs',
+    // To check if tabs are shown on screen
+    CHANGE_TABS_VISIBILITY: 'changeTabsVisibility'
 }
 
 const actionTypes = {
@@ -42,10 +48,17 @@ const playModes = {
     SEQUENCE_LOOP: 'sequenceLoop'
 }
 
+const stateProps = {
+    sideNavbar: 'sideNavbar',
+    tab: 'tab',
+    Tabs: 'Tabs'
+}
+
 export {
     sideNavContent,
     mutationTypes,
     actionTypes,
     AVIcons,
-    playModes
+    playModes,
+    stateProps
 }

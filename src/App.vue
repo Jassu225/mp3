@@ -1,7 +1,8 @@
 <template>
   <v-app>
-    <div class="main-grid grid full-height">
-      <navbar></navbar>
+    <div class="root-grid grid full-height">
+      <navbar :config="config"></navbar>
+      <tab-content :config="config"></tab-content>
       <audio 
         ref="audioPlayer" 
         class="hidden"
@@ -23,19 +24,25 @@
 
 <script>
 import navbar from './components/navbar.vue';
+import tabContent from './components/tabContent.vue';
 import musicControls from './components/musicControls.vue';
 import {actionTypes, mutationTypes} from './assets/js/constants';
+import config from './config';
 
 export default {
   components: {
-    navbar, musicControls
+    navbar, musicControls, tabContent
   },
   data () {
     return {
+      config,
       seekablebarWidth: 0,
       currentTime: 0,
       duration: 0
     }
+  },
+  computed: {
+    
   },
   mounted: function() {
     this.$store.dispatch(actionTypes.GET_SONGS);
@@ -92,7 +99,8 @@ export default {
 
 <style>
 html, body {
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   height: 100%;
   width: 100%;
 }
@@ -132,8 +140,8 @@ a {
   display: grid;
 }
 
-.main-grid {
-  grid-template-rows: auto 6rem;
+.root-grid {
+  grid-template-rows:  96px calc(100% - 6rem - 96px) 6rem;
 }
 
 .full-height {
