@@ -5,14 +5,17 @@
       <audio 
         ref="audioPlayer" 
         class="hidden"
+        @loadeddata="setDuration"
         @ended="audioEnded"
         @pause="audioPaused"
         @play="audioPlaying"
-        @timeupdate="updateSeekbarWidth"
+        @timeupdate="updateSeekbarWidthAndTime"
       ></audio>
       <music-controls 
         :seekablebarWidth="seekablebarWidth"
         :updateAudioTime="updateAudioTime"
+        :currentTime="currentTime"
+        :duration="duration"
       ></music-controls>
     </div>
   </v-app>
@@ -29,7 +32,9 @@ export default {
   },
   data () {
     return {
-      seekablebarWidth: 0
+      seekablebarWidth: 0,
+      currentTime: 0,
+      duration: 0
     }
   },
   mounted: function() {
@@ -67,24 +72,29 @@ export default {
       // set play icon in music-controls
       this.$store.state.musicControls.setPauseIcon();
     },
-    updateSeekbarWidth() {
+    updateSeekbarWidthAndTime() {
       let audio = this.$store.state.audioPlayer;
       this.seekablebarWidth = audio.currentTime / audio.duration * 100;
-      // console.log(this.seekablebarWidth);
+      // update current time
+      this.currentTime = audio.currentTime;
     },
     updateAudioTime(percentage) {
       console.log(percentage);
       let audio = this.$store.state.audioPlayer;
       audio.currentTime = percentage / 100 * audio.duration;
+    },
+    setDuration() {
+      this.duration = this.$store.state.audioPlayer.duration;
     }
   }
 }
 </script>
 
 <style>
-html {
-  overflow-x: auto;
-  overflow-y: hidden;
+html, body {
+  overflow: auto;
+  height: 100%;
+  width: 100%;
 }
 #app {
   font-family: 'Open Sans','Avenir', Helvetica, Arial, sans-serif;
@@ -93,6 +103,8 @@ html {
   text-align: center;
   background-color: #5f5f56;
   user-select: none !important;
+  width: 100%;
+  height: 100%;
 }
 
 h1, h2 {
@@ -121,7 +133,7 @@ a {
 }
 
 .main-grid {
-  grid-template-rows: 1fr 4rem;
+  grid-template-rows: auto 6rem;
 }
 
 .full-height {

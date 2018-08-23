@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <v-toolbar color="black" dark tabs>
+  <div class="grid grid-layout">
+    <v-toolbar color="black" dark tabs class="grid-item item1">
       <v-toolbar-side-icon @click.stop="sideNavbar = !sideNavbar"></v-toolbar-side-icon>
 
       <v-toolbar-title>Mp3 Player</v-toolbar-title>
@@ -27,9 +27,9 @@
       </v-tabs>
     </v-toolbar>
 
-    <div>
-      <v-tabs-items v-model="tab" class="position-absolute full-width" :class="{noOpactiy: !Tabs}">
-        <v-tab-item>
+    <div class="tabs grid-item item2">
+      <v-tabs-items v-model="tab" class="full-width full-height overflow" :class="{noOpactiy: !Tabs, 'position-absolute': !Tabs}">
+        <v-tab-item class="full-height overflow">
           <v-card flat color="transparent" dark>
             <songs-container></songs-container>
           </v-card>
@@ -50,13 +50,13 @@
           :uploadingFiles="uploadingFiles"
         ></router-view>
       </div>
+      <side-nav 
+        :sideNavbar="sideNavbar"
+        :navigateToFileUpload="navigateToFileUpload"
+        :navigateToUploadProgress="navigateToUploadProgress"
+        :uploadCount="uploadingFiles.length"
+      ></side-nav>
     </div>
-    <side-nav 
-      :sideNavbar="sideNavbar"
-      :navigateToFileUpload="navigateToFileUpload"
-	    :navigateToUploadProgress="navigateToUploadProgress"
-      :uploadCount="uploadingFiles.length"
-    ></side-nav>
   </div>
 </template>
 
@@ -145,24 +145,45 @@ export default {
 </script>
 
 <style>
-    .Vuegreen {
-        background-color: #2caf77 !important;
-        border-color: #2caf77 !important;
-    }
+.Vuegreen {
+    background-color: #2caf77 !important;
+    border-color: #2caf77 !important;
+}
 
-    .v-tabs__bar {
-        background-color: transparent !important;
-    }
-    .position-absolute {
-      position: absolute;
-    }
-    .full-width {
-      width: 100%;
-    }
-    .invisible {
-      visibility: hidden;
-    }
-    .noOpactiy {
-      opacity: 0;
-    }
+.v-tabs__bar {
+    background-color: transparent !important;
+}
+.position-absolute {
+  position: absolute;
+}
+.full-width {
+  width: 100%;
+}
+
+.invisible {
+  visibility: hidden;
+}
+.noOpactiy {
+  opacity: 0;
+}
+
+.grid-layout {
+  grid-template-rows: 7rem calc(100% - 7rem);
+  grid-template-areas: "area1" "area2";
+}
+
+.grid-item {
+  min-width: 0;
+  min-height: 0;
+}
+
+.item1 {
+  grid-area: area1;
+}
+.item2 {
+  grid-area: area2;
+}
+.overflow {
+  overflow: auto;
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="full-height">
         <!-- Using Masonry (For grid-view) -->
         <!-- <div v-if="songs && songs.length" v-masonry transition-duration="0.3s" item-selector=".item">
             <div v-masonry-tile class="item" v-for="(song, index) in songs" :key="index">
@@ -7,7 +7,7 @@
             </div>
         </div> -->
         <!-- <audio ref="audioPlayer" class="hidden"></audio> -->
-        <div v-if="songs && songs.length" class="songs-container">
+        <div v-if="songs && songs.length" class="songs-container overflow">
             <song-block 
                 v-for="(song, index) in songs" 
                 :key="index" 
@@ -125,5 +125,9 @@ export default {
 
 .full-width {
     width: 100%;
+}
+
+.overflow {
+    overflow: auto;
 }
 </style>

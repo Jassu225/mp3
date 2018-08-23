@@ -1,7 +1,7 @@
 <template>
     <div class="footer grid">
         <div class="grid seekbarGrid">
-            <div></div>
+            <div class="time">{{ getReadableTime(currentTime) }}</div>
             <div class="seekbarContainer grid">
                 <div class="seekbar" ref="seekbar" @mousedown="getOffsetX">
                     <div class="seekedBar" :style="{width: seekbarWidthPercentage + '%'}" style="max-width:100%;">
@@ -9,7 +9,7 @@
                     </div>
                 </div>
             </div>
-            <div></div>
+            <div class="time">{{ getReadableTime(duration) }}</div>
         </div>
         <div class="controlsContainer grid">
           <div class="controls">
@@ -43,7 +43,7 @@ export default {
       IconSelector: 0
     };
   },
-  props: ['seekablebarWidth', 'updateAudioTime'],
+  props: ['seekablebarWidth', 'updateAudioTime', 'currentTime' , 'duration'],
   mounted() {
     // this.dragSeekbar();
     window.addEventListener("mouseup", this.addMouseUpListener);
@@ -59,9 +59,34 @@ export default {
         return this.seekbarWidth;
       else
         return this.seekablebarWidth;
-    }
+    },
+    // currentTime: function() {
+    //   return this.getReadableTime(this.$store.state.audioPlayer.currentTime);
+    // },
+    // durationTime: function() {
+    //   return this.getReadableTime(this.$store.state.audioPlayer.duration);
+    // }
   },
   methods: {
+    getReadableTime(duration) {
+      let seconds = duration, minutes = 0, hours = 0;
+      while(seconds > 60) {
+          minutes ++;
+          seconds -= 60;
+      }
+      while(minutes > 60) {
+          hours ++;
+          minutes -= 60;
+      }
+
+      seconds = Math.round(seconds);
+
+      return ( 
+      `${hours ? hours + ':' : ''}` +
+      `${minutes ? (hours ? (minutes >= 10 ? minutes : '0' + minutes) : minutes) : '0'}:` +
+      `${seconds ? (seconds > 9 ? seconds: '0' + seconds) : '00'}`
+      );
+    },
     getOffsetX: function(event) {
       // console.log(event);
       // console.log(this.$el.offsetWidth);
@@ -151,7 +176,7 @@ export default {
 <style scoped>
 .footer {
   background-color: black;
-  grid-template-rows: 1.5rem 1fr;
+  grid-template-rows: 2rem 1fr;
 }
 
 .seekbarGrid {
@@ -199,5 +224,9 @@ export default {
 
 .controls > .v-icon:hover {
   color: #839198;
+}
+.time {
+  color: white;
+  align-self: center;
 }
 </style>
