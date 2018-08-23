@@ -4,7 +4,7 @@
 		@dragover="dragOverHandler"
 		class="bg drop-zone" 
 		color=""
-		height="30rem"
+		height="80%"
 		width="90%"
 	>
 		<v-card-text class="center-text-vertically" @click="getSongsUsingInput">

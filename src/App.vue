@@ -1,9 +1,34 @@
 <template>
   <v-app>
+    <side-nav 
+        :sideNavbar="sideNavbar"
+        :navigateToFileUpload="navigateToFileUpload"
+        :navigateToUploadProgress="navigateToUploadProgress"
+        :uploadCount="uploadingFiles.length"
+    ></side-nav>
     <div class="root-grid grid full-height">
       <navbar :config="config"></navbar>
-      <tab-content :config="config"></tab-content>
-      <audio 
+      <div class="position-relative">
+        <div class="overflow position-absolute full-height">
+          <tab-content :config="config" class="full-height"></tab-content>
+        </div>
+        <div v-if="!Tabs" class="position-absolute full-width full-height">
+          <router-view 
+            name="fileUpload" 
+            :config="config"
+            :uploadProgress="uploadProgress"
+            :uploadComplete="uploadComplete"
+            :uploadFailed="uploadFailed"
+            :uploadCanceled="uploadCanceled"
+            :addToUploadingFiles="addToUploadingFiles"
+          ></router-view>
+          <router-view
+            name="uploadProgress"
+            :uploadingFiles="uploadingFiles"
+          ></router-view>
+        </div>
+      </div>
+      <video 
         ref="audioPlayer" 
         class="hidden"
         @loadeddata="setDuration"
@@ -11,7 +36,7 @@
         @pause="audioPaused"
         @play="audioPlaying"
         @timeupdate="updateSeekbarWidthAndTime"
-      ></audio>
+      ></video>
       <music-controls 
         :seekablebarWidth="seekablebarWidth"
         :updateAudioTime="updateAudioTime"
@@ -26,23 +51,45 @@
 import navbar from './components/navbar.vue';
 import tabContent from './components/tabContent.vue';
 import musicControls from './components/musicControls.vue';
-import {actionTypes, mutationTypes} from './assets/js/constants';
+import sideNav from './components/sideNav.vue';
+import {actionTypes, mutationTypes, stateProps} from './assets/js/constants';
 import config from './config';
+import urls from './router/urls';
 
 export default {
   components: {
-    navbar, musicControls, tabContent
+    navbar, musicControls, tabContent, sideNav
   },
   data () {
     return {
       config,
       seekablebarWidth: 0,
       currentTime: 0,
-      duration: 0
+      duration: 0,
+      uploadingFiles: []
     }
   },
   computed: {
-    
+    sideNavbar: {
+      get: function() {
+          return this.$store.state[stateProps.sideNavbar];
+      },
+      set: function(newValue) {
+          this.$store.commit(mutationTypes.TOGGLE_SIDENAV,{
+              newValue
+          });
+      }
+    },
+    Tabs: {
+        get: function() {
+            return this.$store.state[stateProps.Tabs];
+        },
+        set: function(newValue) {
+            return this.$store.commit(mutationTypes.CHANGE_TABS_VISIBILITY, {
+                newValue
+            });
+        }
+    }
   },
   mounted: function() {
     this.$store.dispatch(actionTypes.GET_SONGS);
@@ -51,6 +98,59 @@ export default {
     });
   },
   methods: {
+    navigateToFileUpload: function() {
+        this.navigateTo(urls.FILE_UPLOAD);
+    },
+    navigateTo: function(route) {
+        console.log(route);
+        this.Tabs = false;
+        this.$router.push(route);
+        this.sideNavbar = false;
+    },
+    navigateToUploadProgress: function() {
+        this.navigateTo(urls.UPLOAD_PROGRESS);
+    },
+    uploadProgress: function(fileName, completed) {
+        //   console.log(event.loaded);
+        //   console.log(event.total);
+        this.uploadingFiles[this.getIndex(fileName)].uploadedSize = completed;
+    },
+    uploadComplete: function(fileName) {
+        console.log('upload complete');
+        this.uploadingFiles[this.getIndex(fileName)].uploadedSize = this.uploadingFiles[this.getIndex(fileName)].totalSize;
+        this.removeFromUploadingFiles(fileName);
+    },
+    uploadFailed: function(fileName) {
+        console.log('upload failed');
+        this.removeFromUploadingFiles(fileName);
+    },
+    uploadCanceled: function(fileName) {
+        console.log('upload canceled');
+        this.removeFromUploadingFiles(fileName);
+    },
+    addToUploadingFiles: function(files) {
+        console.log(files);
+        files.forEach(file => {
+            if(this.getIndex(file.name) == INDEX_NOT_FOUND) {
+                this.uploadingFiles.push({
+                    name: file.name,
+                    totalSize: file.base64Size,
+                    uploadedSize: 0,
+                    index: this.uploadingFiles.length
+                });
+            } else {
+                console.log(`${file.name} -- duplicate `);
+            }
+        });
+
+        this.navigateToUploadProgress();
+    },
+    getIndex: function(fileName) {
+        return this.uploadingFiles.findIndex(file => file.name === fileName);
+    },
+    removeFromUploadingFiles: function(fileName) {
+        this.uploadingFiles.splice(this.getIndex(fileName), 1);
+    },
     audioEnded() {
       // for setting play icon in song-block
       this.$store.state.selectedSong.VueReference.AudioEnded();
@@ -146,5 +246,13 @@ a {
 
 .full-height {
   height: 100%;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
 }
 </style>

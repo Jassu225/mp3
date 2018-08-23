@@ -13,7 +13,7 @@
         </div>
         <div class="controlsContainer grid">
           <div class="controls">
-            <v-icon>{{ AVIcons.replay }}</v-icon>
+            <v-icon @click="replay">{{ AVIcons.replay }}</v-icon>
             <v-icon>{{ AVIcons.fastRewind }}</v-icon>
             <v-icon @click="previousSong">{{ AVIcons.skipPrevious }}</v-icon>
             <v-icon @click="playPauseAudio">{{ Icons[IconSelector] }}</v-icon>
@@ -168,6 +168,9 @@ export default {
         next: true,
         previous: false
       });
+    },
+    replay: function() {
+      this.$store.state.audioPlayer.currentTime = 0;
     }
   }
 };
