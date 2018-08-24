@@ -13,13 +13,13 @@
         </div>
         <div class="controlsContainer grid">
           <div class="controls">
-            <v-icon @click="replay">{{ AVIcons.replay }}</v-icon>
-            <v-icon>{{ AVIcons.fastRewind }}</v-icon>
+            <v-icon @click="replay()">{{ AVIcons.replay }}</v-icon>
+            <v-icon @click="replay(5)">{{ AVIcons.fastRewind }}</v-icon>
             <v-icon @click="previousSong">{{ AVIcons.skipPrevious }}</v-icon>
             <v-icon @click="playPauseAudio">{{ Icons[IconSelector] }}</v-icon>
             <v-icon @click="nextSong">{{ AVIcons.skipNext }}</v-icon>
-            <v-icon>{{ AVIcons.fastForward }}</v-icon>
-            <v-icon>{{ AVIcons.loop }}</v-icon>
+            <v-icon @click="replay(-5)">{{ AVIcons.fastForward }}</v-icon>
+            <v-icon @click="changePlayMode">{{ playModeIcons[playModeIconSelector] }}</v-icon>
           </div>
         </div>
     </div>
@@ -38,9 +38,9 @@ export default {
       percentageForAudio: 0,
       AVIcons,
       Icons: [AVIcons.playCircle, AVIcons.pauseCircle],
-      playCircleIndex: 0,
-      pauseCircleIndex: 1,
-      IconSelector: 0
+      IconSelector: 0,
+      playModeIcons: [AVIcons.loopAll, AVIcons.onceAll],
+      playModeIconSelector: 0
     };
   },
   props: ['seekablebarWidth', 'updateAudioTime', 'currentTime' , 'duration'],
@@ -140,14 +140,14 @@ export default {
       this.seekbarWidth = percentage;
     },
     setPlayIcon: function() {
-      this.IconSelector = this.playCircleIndex;
+      this.IconSelector = 0;
     },
     setPauseIcon: function() {
-      this.IconSelector = this.pauseCircleIndex;
+      this.IconSelector = 1;
     },
     playPauseAudio: function() {
       let audio = this.$store.state.audioPlayer;
-      console.log(audio);
+      // console.log(audio);
       if(audio.paused) {
         if(audio.readyState == 3 || audio.readyState == 4)
           audio.play();
@@ -169,8 +169,18 @@ export default {
         previous: false
       });
     },
-    replay: function() {
-      this.$store.state.audioPlayer.currentTime = 0;
+    replay: function(value) {
+      // console.log(value);
+      if(!value)
+        this.$store.state.audioPlayer.currentTime = 0;
+      else
+        this.$store.state.audioPlayer.currentTime -= value;
+    },
+    changePlayMode: function() {
+      this.playModeIconSelector = (this.playModeIconSelector + 1) % this.playModeIcons.length;
+      this.$store.commit(mutationTypes.SET_PLAY_MODE, {
+        playMode: this.playModeIcons[this.playModeIconSelector]
+      });
     }
   }
 };

@@ -9,7 +9,7 @@
     <div class="root-grid grid full-height">
       <navbar :config="config"></navbar>
       <div class="position-relative">
-        <div class="overflow position-absolute full-height">
+        <div class="overflow position-absolute full-width full-height">
           <tab-content :config="config" class="full-height"></tab-content>
         </div>
         <div v-if="!Tabs" class="position-absolute full-width full-height">
@@ -55,6 +55,8 @@ import sideNav from './components/sideNav.vue';
 import {actionTypes, mutationTypes, stateProps} from './assets/js/constants';
 import config from './config';
 import urls from './router/urls';
+
+const INDEX_NOT_FOUND = -1;
 
 export default {
   components: {
@@ -203,6 +205,10 @@ html, body {
   overflow-y: hidden;
   height: 100%;
   width: 100%;
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none;
 }
 #app {
   font-family: 'Open Sans','Avenir', Helvetica, Arial, sans-serif;
@@ -210,7 +216,6 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   background-color: #5f5f56;
-  user-select: none !important;
   width: 100%;
   height: 100%;
 }

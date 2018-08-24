@@ -34,8 +34,6 @@
 import moreMenu from './moreMenu.vue';
 import {stateProps, mutationTypes} from '../assets/js/constants';
 
-const INDEX_NOT_FOUND = -1;
-
 export default {
   components: {
     moreMenu

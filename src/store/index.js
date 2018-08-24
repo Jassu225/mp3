@@ -3,6 +3,8 @@ import Vuex from 'vuex';
 import config from '../config';
 import {mutationTypes, actionTypes, playModes} from '../assets/js/constants';
 import APIHandler from './APIHandler';
+// play sequences based on playModes
+import playlists from './playlists';
 
 Vue.use(Vuex);
 const store = new Vuex.Store({
@@ -18,7 +20,7 @@ const store = new Vuex.Store({
       audioPlayer: null,
       previousSelection: null,
       selectedSong: null,
-      playMode: playModes.SEQUENCE_LOOP,
+      playMode: playModes.LOOP_ALL,
       seekablebarWidth: 0,
       musicControls: null
     },
@@ -49,23 +51,41 @@ const store = new Vuex.Store({
       [mutationTypes.SELECT_SONG_BASED_ON_PLAYMODE] (state, payload) {
         // make current selection previous
         state.previousSelection = state.selectedSong;
-        let nextSongIndex =-1, step = 0;
 
-        if(payload.next)  step = 1;
-        else if(payload.previous) step = -1
+        let SongIndex = null, calleFunction = null;
+
+        if(payload.next)  calleFunction = 'nextIndex';
+        else if(payload.previous) calleFunction = 'previousIndex';
         // find nexSongIndex based on playMode
         switch(state.playMode) {
-          case playModes.SEQUENCE_LOOP:
-            nextSongIndex = (state.previousSelection.index + step + state.songs.length) % state.songs.length;
+          case playModes.LOOP_ALL:
+            SongIndex = playlists.sequenceLoopPlaylist[calleFunction](state.selectedSong._id);
             // console.log(nextSongIndex);
             break;
+          case playModes.ONCE_ALL:
+            SongIndex = playlists.sequenceLoopPlaylist[calleFunction](state.selectedSong._id);
+            break;
         }
+        // if SongIndex is null, stop player
+        if(SongIndex == null) return;
         // make new Selection
-        state.selectedSong = state.songs[nextSongIndex];
+        state.selectedSong = state.songs[SongIndex];
         // load Audio player with new selection source
         state.selectedSong.VueReference.LoadAudio();
         // play new Song
         state.selectedSong.VueReference.playPauseSong();
+      },
+      [mutationTypes.SET_PLAY_MODE] (state, payload) {
+        state.playMode = payload.playMode;
+        // set play mode 
+        switch(state.playMode) {
+          case playModes.LOOP_ALL:
+            playlists.sequenceLoopPlaylist.loopAll();
+            break;
+          case playModes.ONCE_ALL:
+            playlists.sequenceLoopPlaylist.onceAll();
+            break;
+        }
       }
     },
     actions: {
@@ -73,6 +93,7 @@ const store = new Vuex.Store({
         let data = await APIHandler.getSongs();
         // console.log(data);
         state.songs = JSON.parse(data).songs;
+        playlists.init(state.songs);
         // console.log(data.songs[0].album);
       },
       async [actionTypes.GET_SONGS] ({ commit, state, dispatch }) {

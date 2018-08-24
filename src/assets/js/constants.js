@@ -14,7 +14,9 @@ const mutationTypes = {
     // To switch b/w tabs
     SWITCH_TABS: 'switchTabs',
     // To check if tabs are shown on screen
-    CHANGE_TABS_VISIBILITY: 'changeTabsVisibility'
+    CHANGE_TABS_VISIBILITY: 'changeTabsVisibility',
+    // SET PLAY MODE
+    SET_PLAY_MODE: 'setPlaymode'
 }
 
 const actionTypes = {
@@ -40,12 +42,16 @@ const AVIcons = {
     forwardTenSeconds: 'forward_10',
     forwardFiveSeconds: 'forward_5',
     fastForward: 'fast_forward',
-    loop: 'loop',
+    // playMode Icons
+    loopAll: 'loop',
+    onceAll: 'trending_flat'
 }
 
 const playModes = {
+    // Play index-wise from song Array in a loop
+    LOOP_ALL: AVIcons.loopAll,
     // Play index-wise from song Array
-    SEQUENCE_LOOP: 'sequenceLoop'
+    ONCE_ALL: AVIcons.onceAll
 }
 
 const stateProps = {
