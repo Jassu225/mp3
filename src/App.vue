@@ -163,7 +163,8 @@ export default {
       // select next song based on playMode
       this.$store.commit(mutationTypes.SELECT_SONG_BASED_ON_PLAYMODE, {
         next: true,
-        previous: false
+        previous: false,
+        autoplay: true
       });
     },
     audioPaused() {
@@ -188,8 +189,9 @@ export default {
       this.currentTime = audio.currentTime;
     },
     updateAudioTime(percentage) {
-      console.log(percentage);
+      // console.log(percentage);
       let audio = this.$store.state.audioPlayer;
+      if(audio.readyState < 3) return;
       audio.currentTime = percentage / 100 * audio.duration;
     },
     setDuration() {

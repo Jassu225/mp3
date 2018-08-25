@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-toolbar color="black" dark tabs>
+    <v-toolbar class="navColor" dark tabs>
       <v-toolbar-side-icon @click.stop="sideNavbar = !sideNavbar"></v-toolbar-side-icon>
 
       <v-toolbar-title>Mp3 Player</v-toolbar-title>
@@ -16,7 +16,7 @@
       <v-tabs
         slot="extension"
         v-model="tab"
-        color="black"
+        color="transparent"
         align-with-title
       >
         <v-tabs-slider color="white"></v-tabs-slider>
@@ -88,6 +88,10 @@ export default {
 .Vuegreen {
     background-color: #2caf77 !important;
     border-color: #2caf77 !important;
+}
+
+.navColor {
+  background-color: #21242e !important;
 }
 
 .v-tabs__bar {

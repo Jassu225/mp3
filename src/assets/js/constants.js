@@ -30,6 +30,7 @@ const AVIcons = {
     playlistAdd: 'playlist_add',
     queue: 'queue',
     playNext: 'queue_play_next',
+    add: 'add',
     // controls
     replay: 'replay',
     replayTenSeconds: 'replay_10',
@@ -42,6 +43,7 @@ const AVIcons = {
     forwardTenSeconds: 'forward_10',
     forwardFiveSeconds: 'forward_5',
     fastForward: 'fast_forward',
+    shuffle: 'shuffle',
     // playMode Icons
     loopAll: 'loop',
     onceAll: 'trending_flat'

@@ -4,17 +4,34 @@
             {{ song.title }}
         </div>
         <div class="song-action" @click="playPauseSong()">
-            <v-icon title="play">{{ Icons[IconSelector] }}</v-icon>
+            <!-- <v-icon title="play">{{ Icons[IconSelector] }}</v-icon> -->
+            <material-icon title="play">{{ Icons[IconSelector] }}</material-icon>
         </div>
         <div class="song-action">
-            <v-icon title="add to queue">{{ AVIcons.queue }}</v-icon>
+            <v-menu 
+                open-on-hover
+                transition="slide-y-transition"
+                bottom
+            >
+                <material-icon slot="activator" title="Add to queue">{{ AVIcons.add }}</material-icon>
+                <v-list>
+                    <v-list-tile
+                    v-for="(item, index) in moreActions"
+                    :key="index"
+                    class="more-actions-item"
+                    @click="actions(item)"
+                    >
+                        <v-list-tile-title>{{ item }}</v-list-tile-title>
+                    </v-list-tile>
+                </v-list>
+            </v-menu>
+        </div>
+        <!-- <div class="song-action">
+            <material-icon title="Play Next">{{ AVIcons.playNext }}</material-icon>
         </div>
         <div class="song-action">
-            <v-icon title="play next">{{ AVIcons.playNext }}</v-icon>
-        </div>
-        <div class="song-action">
-            <v-icon title="add to playlist">{{ AVIcons.playlistAdd }}</v-icon>
-        </div>
+            <material-icon title="Add to Playlist">{{ AVIcons.playlistAdd }}</material-icon>
+        </div> -->
         <div class="song-artists" :title="song.artists.toString()">
             {{song.artists.toString()}}
         </div>
@@ -31,10 +48,22 @@
 </template>
 
 <script>
+// component import(s)
+import MaterialIcon from './generic/materialIcon.vue';
+
 import { AVIcons } from '../assets/js/constants.js';
 import config from '../config.js';
 
+const addItems = {
+    PLAY_NEXT: 'Play Next',
+    QUEUE: 'Queue',
+    NEW_PLAYLIST: 'New Playlist'
+};
+
 export default {
+    components: {
+        MaterialIcon
+    },
     data: function() {
         return {
             AVIcons,
@@ -43,7 +72,9 @@ export default {
             playIconIndex: 0,
             pauseIconIndex: 1,
             playPauseSelector: 0,
-            isPlaying: false
+            isPlaying: false,
+            // More Actions
+            moreActions: [ addItems.PLAY_NEXT, addItems.QUEUE, addItems.NEW_PLAYLIST]
         };
     },
     props: [
@@ -137,6 +168,16 @@ export default {
         // after selecting next song based on playMode
         LoadAudio() {
             this.loadAudio(this.song.src);
+        },
+        actions(action) {
+            switch(action) {
+                case addItems.PLAY_NEXT:
+                    break;
+                case addItems.QUEUE:
+                    break;
+                case addItems.NEW_PLAYLIST:
+                    break;
+            }
         }
     },
     mounted: function() {
@@ -157,7 +198,19 @@ export default {
     display: grid;
     padding-left: 1rem;
     grid-gap: 1rem;
-    grid-template-columns: 2fr 2rem 2rem 2rem 2rem 1fr 1fr 1fr 4rem;
+    grid-template-columns: 2fr 2rem 2rem 1fr 1fr 1fr 4rem;
+    box-sizing: border-box;
+    color: #ddd;
+    border-bottom: 0.1px solid #504d4d;
+    margin: 0 1rem;
+}
+
+.song-block:hover {
+    background-color: #696868;
+}
+
+.song-block :last-child {
+    border-bottom: 0;
 }
 
 .song-block > div {
@@ -180,14 +233,20 @@ export default {
     cursor: pointer;
 }
 
+.more-actions-item:hover {
+    background-color: #dfdfdf;
+}
+
 .full-height {
     height: 3rem;
 }
 
-.selected {
-    color: #51acef;
+.song-block.selected {
+    background-color: #414141;
 }
-.selected .v-icon {
-    color: #51acef !important;
+
+.song-block.selected > .song-title{
+    color: #e72c30;
+    font-weight: 600;
 }
 </style>

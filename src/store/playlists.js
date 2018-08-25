@@ -21,15 +21,16 @@ const playlists = {
             }
             return list.findIndex(getIndex);
         }
-        this.nextIndex = function(songID) {
+        this.nextIndex = function(songID, autoplay) {
+            // console.log(autoplay);
             // after last song return null if loopAll set to false
-            if(!loopAll && selectedIndex == list.length - 1) return null;
+            if(!loopAll && getIndex(songID) == list.length - 1 && autoplay) return null;
             selectedIndex = (getIndex(songID) + 1) % list.length;
             return selectedIndex;
         }
-        this.previousIndex = function(songID) {
+        this.previousIndex = function(songID, autoplay) {
             // before first song return null if loopAll set to false
-            if(!loopAll && selectedIndex == 0) return null;
+            if(!loopAll && getIndex(songID) == 0 && autoplay) return null;
             selectedIndex = (getIndex(songID) - 1 + list.length) % list.length
             return selectedIndex;
         },

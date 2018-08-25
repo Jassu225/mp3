@@ -113,15 +113,15 @@ export default {
 }
 
 .songs-container {
-    user-select: none;
+    background-color: #111;
 }
-.songs-container > :nth-child(even) {
+/* .songs-container > :nth-child(even) {
     background-color: #5d5c5c;
 }
 
 .songs-container > :nth-child(odd) {
     background-color: #4d4d4d;
-}
+} */
 
 .full-width {
     width: 100%;

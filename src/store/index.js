@@ -59,11 +59,11 @@ const store = new Vuex.Store({
         // find nexSongIndex based on playMode
         switch(state.playMode) {
           case playModes.LOOP_ALL:
-            SongIndex = playlists.sequenceLoopPlaylist[calleFunction](state.selectedSong._id);
+            SongIndex = playlists.sequenceLoopPlaylist[calleFunction](state.selectedSong._id, payload.autoplay);
             // console.log(nextSongIndex);
             break;
           case playModes.ONCE_ALL:
-            SongIndex = playlists.sequenceLoopPlaylist[calleFunction](state.selectedSong._id);
+            SongIndex = playlists.sequenceLoopPlaylist[calleFunction](state.selectedSong._id, payload.autoplay);
             break;
         }
         // if SongIndex is null, stop player

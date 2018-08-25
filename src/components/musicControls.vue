@@ -1,5 +1,5 @@
 <template>
-    <div class="footer grid">
+    <div class="footer navColor grid">
         <div class="grid seekbarGrid">
             <div class="time">{{ getReadableTime(currentTime) }}</div>
             <div class="seekbarContainer grid">
@@ -14,6 +14,7 @@
         <div class="controlsContainer grid">
           <div class="controls">
             <v-icon @click="replay()">{{ AVIcons.replay }}</v-icon>
+            <v-icon >{{ AVIcons.shuffle }}</v-icon>
             <v-icon @click="replay(5)">{{ AVIcons.fastRewind }}</v-icon>
             <v-icon @click="previousSong">{{ AVIcons.skipPrevious }}</v-icon>
             <v-icon @click="playPauseAudio">{{ Icons[IconSelector] }}</v-icon>
@@ -159,14 +160,16 @@ export default {
       // select previous song based on playMode
       this.$store.commit(mutationTypes.SELECT_SONG_BASED_ON_PLAYMODE, {
         next: false,
-        previous: true
+        previous: true,
+        autoplay: false
       });
     },
     nextSong: function() {
       // select next song based on playMode
       this.$store.commit(mutationTypes.SELECT_SONG_BASED_ON_PLAYMODE, {
         next: true,
-        previous: false
+        previous: false,
+        autoplay: false
       });
     },
     replay: function(value) {
@@ -188,7 +191,6 @@ export default {
 
 <style scoped>
 .footer {
-  background-color: black;
   grid-template-rows: 2rem 1fr;
 }
 
@@ -197,7 +199,7 @@ export default {
 }
 
 .seekbar {
-  height: 4px;
+  height: 2px;
   border-radius: 2px;
   align-self: center;
   background-color: #4b4b4b;
@@ -207,7 +209,7 @@ export default {
 .seekedBar {
   height: 100%;
   border-radius: 2px;
-  background-color: #417d8d;
+  background-color: #e14236;
   cursor: pointer;
 }
 
@@ -216,11 +218,17 @@ export default {
   position: relative;
   height: 10px;
   width: 10px;
-  margin-top: -3px;
+  margin-top: -4px;
   background-color: #dadcdd;
   border-radius: 50%;
   cursor: pointer;
+  /* opacity: 0; */
+  transition: 0.3s opacity ease;
 }
+
+/* .seekbarTip:hover {
+  opacity: 1;
+} */
 
 .controls {
   justify-self: center;
@@ -238,6 +246,7 @@ export default {
 .controls > .v-icon:hover {
   color: #839198;
 }
+
 .time {
   color: white;
   align-self: center;
