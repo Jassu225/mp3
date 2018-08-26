@@ -14,7 +14,7 @@
         <div class="controlsContainer grid">
           <div class="controls">
             <v-icon @click="replay()">{{ AVIcons.replay }}</v-icon>
-            <v-icon >{{ AVIcons.shuffle }}</v-icon>
+            <v-icon :class="{disabled: !shuffle}" @click="toggleShuffle">{{ AVIcons.shuffle }}</v-icon>
             <v-icon @click="replay(5)">{{ AVIcons.fastRewind }}</v-icon>
             <v-icon @click="previousSong">{{ AVIcons.skipPrevious }}</v-icon>
             <v-icon @click="playPauseAudio">{{ Icons[IconSelector] }}</v-icon>
@@ -41,7 +41,8 @@ export default {
       Icons: [AVIcons.playCircle, AVIcons.pauseCircle],
       IconSelector: 0,
       playModeIcons: [AVIcons.loopAll, AVIcons.onceAll],
-      playModeIconSelector: 0
+      playModeIconSelector: 0,
+      shuffle: false
     };
   },
   props: ['seekablebarWidth', 'updateAudioTime', 'currentTime' , 'duration'],
@@ -150,6 +151,16 @@ export default {
       let audio = this.$store.state.audioPlayer;
       // console.log(audio);
       if(audio.paused) {
+        // if no audio src,
+        // it means player has not started yet.
+        // so start it by selecting first song in a list
+        if(!this.$store.state.selectedSong) {
+          this.$store.commit(mutationTypes.SELECT_SONG_BASED_ON_PLAYMODE, {
+            next: true,
+            previous: false,
+            autoplay: false
+          });
+        }
         if(audio.readyState == 3 || audio.readyState == 4)
           audio.play();
       } else {
@@ -184,6 +195,10 @@ export default {
       this.$store.commit(mutationTypes.SET_PLAY_MODE, {
         playMode: this.playModeIcons[this.playModeIconSelector]
       });
+    },
+    toggleShuffle: function() {
+      this.$store.commit(mutationTypes.TOGGLE_SHUFFLE);
+      this.shuffle = ! this.shuffle;
     }
   }
 };
@@ -243,8 +258,12 @@ export default {
   border-radius: 50%;
 }
 
+.disabled {
+  color: #839198 !important;
+}
+
 .controls > .v-icon:hover {
-  color: #839198;
+  color: #adadad;
 }
 
 .time {

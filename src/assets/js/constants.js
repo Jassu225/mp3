@@ -8,7 +8,11 @@ const mutationTypes = {
     CREATE_AUDIO_PLAYER_REFERENCE: 'createAudioPlayerReference',
     CREATE_MUSIC_CONTROLS_REFERENCE: 'createMusicControlsReference',
     SELECT_SONG: 'selectSong',
+    // Music Controls' Actions
+    // -------------------------------------------------------------------
     SELECT_SONG_BASED_ON_PLAYMODE: 'selectNextSongBasedOnPlayMode',
+    TOGGLE_SHUFFLE: 'toggleShuffle',
+    // -------------------------------------------------------------------
     // To change sideNav prop
     TOGGLE_SIDENAV: 'toggleSidenav',
     // To switch b/w tabs
@@ -16,7 +20,9 @@ const mutationTypes = {
     // To check if tabs are shown on screen
     CHANGE_TABS_VISIBILITY: 'changeTabsVisibility',
     // SET PLAY MODE
-    SET_PLAY_MODE: 'setPlaymode'
+    SET_PLAY_MODE: 'setPlaymode',
+    // play Next Song action
+    PLAY_NEXT: 'playNext'
 }
 
 const actionTypes = {

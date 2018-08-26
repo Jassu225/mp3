@@ -63,12 +63,17 @@ export default {
             // console.log('remove selected song');
         },
         selectSong(song) {
-            // console.log('select new song');
-            this.$store.commit(mutationTypes.SELECT_SONG, {
-                song
-            });
-            // if same selection, no need to load the audio
-            if(!this.sameSelection()) {
+            
+            // if not same selection,
+            // 1 - make new selection,
+            // 2 - pause audio player,
+            // 3 - load the audio
+            // console.log(this.sameSelection(song));
+            if(!this.sameSelection(song)) {
+                // console.log('select new song');
+                this.$store.commit(mutationTypes.SELECT_SONG, {
+                    song
+                });
                 // pause Audio
                 this.pauseAudio();
                 // load Audio with new source
@@ -91,10 +96,10 @@ export default {
                 this.pauseAudio();
             }
         },
-        sameSelection() {
-            let previousSelection = this.$store.state.previousSelection;
-            let selectedSong = this.$store.state.selectedSong;
-            return previousSelection && selectedSong && previousSelection._id == selectedSong._id;
+        sameSelection(song) {
+            // let previousSelection = this.$store.state.previousSelection;
+            let currentSelection = this.$store.state.selectedSong;
+            return currentSelection && song && currentSelection._id == song._id;
         }
     }
 }

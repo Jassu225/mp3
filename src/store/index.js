@@ -20,12 +20,14 @@ const store = new Vuex.Store({
       audioPlayer: null,
       previousSelection: null,
       selectedSong: null,
-      playMode: playModes.LOOP_ALL,
+      // Below prop has been removed and added to playlists
+      // seemed unnecessary to declare here
+      // playMode: playModes.LOOP_ALL,
       seekablebarWidth: 0,
       musicControls: null
     },
     mutations: {
-      // to toggle side0navbar
+      // to toggle side-navbar
       [mutationTypes.TOGGLE_SIDENAV] (state,payload) {
         state.sideNavbar = payload.newValue;
       },
@@ -45,27 +47,26 @@ const store = new Vuex.Store({
         state.musicControls = payload.musicControlsReference;
       },
       [mutationTypes.SELECT_SONG] (state, payload) {
+        // make current selection as previous selection
         state.previousSelection = state.selectedSong;
+        // make new selection as current selection
         state.selectedSong = payload.song;
+        // update playlist's selected song index 
+        // in the selected playlist based on playMode
+        playlists.selectNewSong(payload.song);
       },
+      //  Music Controls' actions
+      // -------------------------------------------------------------------
       [mutationTypes.SELECT_SONG_BASED_ON_PLAYMODE] (state, payload) {
         // make current selection previous
         state.previousSelection = state.selectedSong;
 
-        let SongIndex = null, calleFunction = null;
+        let SongIndex = null;
 
-        if(payload.next)  calleFunction = 'nextIndex';
-        else if(payload.previous) calleFunction = 'previousIndex';
-        // find nexSongIndex based on playMode
-        switch(state.playMode) {
-          case playModes.LOOP_ALL:
-            SongIndex = playlists.sequenceLoopPlaylist[calleFunction](state.selectedSong._id, payload.autoplay);
-            // console.log(nextSongIndex);
-            break;
-          case playModes.ONCE_ALL:
-            SongIndex = playlists.sequenceLoopPlaylist[calleFunction](state.selectedSong._id, payload.autoplay);
-            break;
-        }
+        // get next song index from playlists
+        if(payload.next)  SongIndex = playlists.getNextSongIndex(payload.autoplay);
+        else if(payload.previous) SongIndex = playlists.getPreviousSongIndex(payload.autoplay);
+
         // if SongIndex is null, stop player
         if(SongIndex == null) return;
         // make new Selection
@@ -75,18 +76,19 @@ const store = new Vuex.Store({
         // play new Song
         state.selectedSong.VueReference.playPauseSong();
       },
+      [mutationTypes.TOGGLE_SHUFFLE] (state) {
+        playlists.toggleShuffle();
+      },
+      // ----------------------------------------------------------------------------------
       [mutationTypes.SET_PLAY_MODE] (state, payload) {
-        state.playMode = payload.playMode;
-        // set play mode 
-        switch(state.playMode) {
-          case playModes.LOOP_ALL:
-            playlists.sequenceLoopPlaylist.loopAll();
-            break;
-          case playModes.ONCE_ALL:
-            playlists.sequenceLoopPlaylist.onceAll();
-            break;
-        }
+        playlists.setPlayMode(payload.playMode);
+      },
+      // Song Actions
+      // ---------------------------------------------------------------
+      [mutationTypes.PLAY_NEXT] (state, payload) {
+        
       }
+      // -----------------------------------------------------------------
     },
     actions: {
       async [actionTypes.GET_SONGS_FROM_SERVER] ({state}) {

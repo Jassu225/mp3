@@ -51,7 +51,7 @@
 // component import(s)
 import MaterialIcon from './generic/materialIcon.vue';
 
-import { AVIcons } from '../assets/js/constants.js';
+import { AVIcons, mutationTypes } from '../assets/js/constants.js';
 import config from '../config.js';
 
 const addItems = {
@@ -121,31 +121,6 @@ export default {
             );
         },
         playPauseSong() {
-            // console.log('playPauseSong sequence');
-            // if(this.$store.state.selectedSong && (this.$store.state.selectedSong._id == this.song._id)) {
-            //     if(this.isPaused()) {
-            //         this.playAudio();
-            //     } else {
-            //         // pause Audio player
-            //         this.pauseAudio();
-            //     }
-
-            // } else {
-            //     // pause Audio player
-            //     this.pauseAudio();
-            //     // remove old selection
-            //     this.removeSelectedSong();
-            //     // select this song and play
-            //     this.selectSong(this.song, this, `${this.config.apiRootURL + this.config.uploadsDir}/${this.song.title}`);
-            //     // play the selected audio source
-            //     this.playAudio();
-            // }
-
-            // // change icon
-            // this.togglePlayPauseSelector();
-
-            // let audio = new Audio(`${this.config.apiRootURL + this.config.uploadsDir}/${this.song.title}`);
-            // audio.onloadeddata = () => audio.play();
 
             // STORE IN STORE
             this.selectSong(this.song);
@@ -172,6 +147,10 @@ export default {
         actions(action) {
             switch(action) {
                 case addItems.PLAY_NEXT:
+                    // console.log('play Next');
+                    this.$store.commit( mutationTypes.PLAY_NEXT, {
+                        songID: this.song._id
+                    });
                     break;
                 case addItems.QUEUE:
                     break;
