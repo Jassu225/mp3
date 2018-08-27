@@ -22,7 +22,9 @@ const mutationTypes = {
     // SET PLAY MODE
     SET_PLAY_MODE: 'setPlaymode',
     // play Next Song action
-    PLAY_NEXT: 'playNext'
+    PLAY_NEXT: 'playNext',
+    // key controls
+    MUTE_AUDIO: 'muteAudio'
 }
 
 const actionTypes = {
@@ -50,6 +52,8 @@ const AVIcons = {
     forwardFiveSeconds: 'forward_5',
     fastForward: 'fast_forward',
     shuffle: 'shuffle',
+    mute: 'volume_off',
+    unmute: 'volume_up',
     // playMode Icons
     loopAll: 'loop',
     onceAll: 'trending_flat',
@@ -71,11 +75,21 @@ const stateProps = {
     Tabs: 'Tabs'
 }
 
+// KeyPress charcodes
+const KeyPress  = {
+    SPACE_BAR: 32,
+    M: 77,
+    m: 109,
+    l: 108,
+    L: 76
+}
+
 export {
     sideNavContent,
     mutationTypes,
     actionTypes,
     AVIcons,
     playModes,
-    stateProps
+    stateProps,
+    KeyPress
 }

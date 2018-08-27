@@ -91,8 +91,12 @@ const store = new Vuex.Store({
       // ---------------------------------------------------------------
       [mutationTypes.PLAY_NEXT] (state, payload) {
         
-      }
+      },
       // -----------------------------------------------------------------
+      // key controls
+      [mutationTypes.MUTE_AUDIO] (state) {
+        state.audioPlayer.muted = !state.audioPlayer.muted;
+      }
     },
     actions: {
       async [actionTypes.GET_SONGS_FROM_SERVER] ({state}) {

@@ -22,16 +22,25 @@
             <v-icon @click="replay(-5)">{{ AVIcons.fastForward }}</v-icon>
             <v-icon @click="changePlayMode">{{ playModeIcons[playModeIconSelector] }}</v-icon>
           </div>
+          <v-alert
+              value="true"
+              transition="opacity 1s ease-in-out"
+              class="control-alert"
+              :class="{'full-opacity': alert}"
+            >
+              <v-icon dark>{{ alertIcons[alertIconSelector] }}</v-icon>
+          </v-alert>
         </div>
     </div>
 </template>
 
 <script>
-import { AVIcons, mutationTypes } from '../assets/js/constants';
+import { AVIcons, mutationTypes, KeyPress } from '../assets/js/constants';
 
 export default {
   data() {
     return {
+      alert: false,
       draggable: false,
       seekbarStartPosition: 0,
       seekbarWidth: 0,
@@ -42,14 +51,18 @@ export default {
       IconSelector: 0,
       playModeIcons: [AVIcons.loopAll, AVIcons.onceAll, AVIcons.repeatOne],
       playModeIconSelector: 0,
-      shuffle: false
+      shuffle: false,
+      alertIcons: [AVIcons.unmute, AVIcons.mute],
+      alertIconSelector: 0
     };
   },
   props: ['seekablebarWidth', 'updateAudioTime', 'currentTime' , 'duration'],
   mounted() {
-    // this.dragSeekbar();
+    // Window Listeners req. for seekbar
     window.addEventListener("mouseup", this.addMouseUpListener);
     this.addMouseMoveListener();
+    // Window listener(s) req. for music controls
+    window.addEventListener("keypress", this.addKeypressListenerToWindow);
     // add reference to store
     this.$store.commit(mutationTypes.CREATE_MUSIC_CONTROLS_REFERENCE, {
       musicControlsReference: this
@@ -70,6 +83,25 @@ export default {
     // }
   },
   methods: {
+    addKeypressListenerToWindow(event) {
+      console.log(event);
+      let keyCode = event.keyCode || event.which;
+      switch(keyCode) {
+        //mute audio
+        case KeyPress.M:
+        case KeyPress.m: 
+          this.$store.commit(mutationTypes.MUTE_AUDIO);
+          this.alertIconSelector = (this.alertIconSelector + 1 ) % this.alertIcons.length;
+          this.alert = true;
+          setTimeout(() => {
+            this.alert = false;
+          }, 2000);
+          break;
+        case KeyPress.SPACE_BAR:
+          this.playPauseAudio();
+      }
+      
+    },
     getReadableTime(duration) {
       let seconds = duration, minutes = 0, hours = 0;
       while(seconds > 60) {
@@ -205,6 +237,20 @@ export default {
 </script>
 
 <style scoped>
+.control-alert {
+  width: 6rem;
+  height: 3rem;
+  border-radius: 1.5rem;
+  position: absolute;
+  top: 2%;
+  right: 15%;
+  background-color: rgba(100, 100, 100, 0.4) !important;
+  opacity: 0;
+}
+
+.full-opacity {
+  opacity: 1;
+}
 .footer {
   grid-template-rows: 2rem 1fr;
 }
