@@ -24,7 +24,7 @@
           </div>
           <v-alert
               value="true"
-              transition="opacity 1s ease-in-out"
+              transition="opacity 2s ease-in-out"
               class="control-alert"
               :class="{'full-opacity': alert}"
             >
@@ -93,9 +93,7 @@ export default {
           this.$store.commit(mutationTypes.MUTE_AUDIO);
           this.alertIconSelector = (this.alertIconSelector + 1 ) % this.alertIcons.length;
           this.alert = true;
-          setTimeout(() => {
-            this.alert = false;
-          }, 2000);
+          this.alert = false;
           break;
         case KeyPress.SPACE_BAR:
           this.playPauseAudio();
