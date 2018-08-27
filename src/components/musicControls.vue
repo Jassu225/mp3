@@ -40,7 +40,7 @@ export default {
       AVIcons,
       Icons: [AVIcons.playCircle, AVIcons.pauseCircle],
       IconSelector: 0,
-      playModeIcons: [AVIcons.loopAll, AVIcons.onceAll],
+      playModeIcons: [AVIcons.loopAll, AVIcons.onceAll, AVIcons.repeatOne],
       playModeIconSelector: 0,
       shuffle: false
     };
@@ -114,7 +114,7 @@ export default {
         // update audio time
         this.updateAudioTime(this.percentageForAudio);
         // disable drag
-        setTimeout(this.disableDrag, 20) ;
+        setTimeout(this.disableDrag, 40) ;
         // this.playingStarted? this.setTimer() : null;
       }
       // this.removeMouseMoveListener();

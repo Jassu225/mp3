@@ -52,14 +52,17 @@ const AVIcons = {
     shuffle: 'shuffle',
     // playMode Icons
     loopAll: 'loop',
-    onceAll: 'trending_flat'
+    onceAll: 'trending_flat',
+    repeatOne: 'repeat_one'
 }
 
 const playModes = {
     // Play index-wise from song Array in a loop
     LOOP_ALL: AVIcons.loopAll,
     // Play index-wise from song Array
-    ONCE_ALL: AVIcons.onceAll
+    ONCE_ALL: AVIcons.onceAll,
+    // Repeat selected song
+    REPEAT_ONE: AVIcons.repeatOne
 }
 
 const stateProps = {

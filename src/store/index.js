@@ -81,7 +81,11 @@ const store = new Vuex.Store({
       },
       // ----------------------------------------------------------------------------------
       [mutationTypes.SET_PLAY_MODE] (state, payload) {
-        playlists.setPlayMode(payload.playMode);
+        if(payload.playMode == playModes.REPEAT_ONE) state.audioPlayer.loop = true;
+        else {
+          state.audioPlayer.loop = false;
+          playlists.setPlayMode(payload.playMode);
+        }
       },
       // Song Actions
       // ---------------------------------------------------------------
