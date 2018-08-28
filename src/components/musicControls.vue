@@ -53,7 +53,8 @@ export default {
       playModeIconSelector: 0,
       shuffle: false,
       alertIcons: [AVIcons.unmute, AVIcons.mute],
-      alertIconSelector: 0
+      alertIconSelector: 0,
+      timeoutID: null
     };
   },
   props: ['seekablebarWidth', 'updateAudioTime', 'currentTime' , 'duration'],
@@ -93,7 +94,9 @@ export default {
           this.$store.commit(mutationTypes.MUTE_AUDIO);
           this.alertIconSelector = (this.alertIconSelector + 1 ) % this.alertIcons.length;
           this.alert = true;
-          this.alert = false;
+          // this.alert = false;
+          window.clearTimeout(this.timeoutID);
+          this.timeoutID =  setTimeout(() => this.alert = false, 2000);
           break;
         case KeyPress.SPACE_BAR:
           this.playPauseAudio();
