@@ -21,6 +21,23 @@
             <v-icon @click="nextSong">{{ AVIcons.skipNext }}</v-icon>
             <v-icon @click="replay(-5)">{{ AVIcons.fastForward }}</v-icon>
             <v-icon @click="changePlayMode">{{ playModeIcons[playModeIconSelector] }}</v-icon>
+            <div class="inline-block" 
+              @mouseover="showVolumebar"
+              @mouseout="hideVolumeBar">
+              <v-icon
+               class="volume-icon"
+               @click="toggleMute"
+              >
+                {{ volumeIcons[volumeIconsSelector]}}
+              </v-icon>
+              <div class="volumeBar-container" :hidden="volumebarHidden">
+                <div class="volumeBar" ref="volumebar" @mousedown="getOffsetYOfVolumebar">
+                  <div class="volumeBar-seeker" :style="{height: volumebarHeight + '%'}" style="max-height: 100%">
+                    <span class="volumeBarTip"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <v-alert
               value="true"
@@ -41,6 +58,7 @@ export default {
   data() {
     return {
       alert: false,
+      volumebarHidden: true,
       draggable: false,
       seekbarStartPosition: 0,
       seekbarWidth: 0,
@@ -52,12 +70,18 @@ export default {
       playModeIcons: [AVIcons.loopAll, AVIcons.onceAll, AVIcons.repeatOne],
       playModeIconSelector: 0,
       shuffle: false,
-      alertIcons: [AVIcons.unmute, AVIcons.mute],
+      alertIcons: [AVIcons.unmute, AVIcons.mute, AVIcons.pause, AVIcons.playArrow],
       alertIconSelector: 0,
-      timeoutID: null
+      alertIconSelectorMute: 0,
+      timeoutID: null,
+      volumebarStartPosition: 0,
+      volumebarEndPosition: 0,
+      volumebarHeight: 100,
+      isVolumebarDraggable: false,
+      volumeIcons: [AVIcons.volumeOff, AVIcons.volumeDown, AVIcons.volumeUp]
     };
   },
-  props: ['seekablebarWidth', 'updateAudioTime', 'currentTime' , 'duration'],
+  props: ['seekablebarWidth', 'updateAudioTime', 'currentTime' , 'duration', 'audioVolume'],
   mounted() {
     // Window Listeners req. for seekbar
     window.addEventListener("mouseup", this.addMouseUpListener);
@@ -76,6 +100,9 @@ export default {
       else
         return this.seekablebarWidth;
     },
+    volumeIconsSelector: function() {
+      return Math.ceil(this.audioVolume * (this.volumeIcons.length - 1));
+    }
     // currentTime: function() {
     //   return this.getReadableTime(this.$store.state.audioPlayer.currentTime);
     // },
@@ -84,21 +111,31 @@ export default {
     // }
   },
   methods: {
+    showVolumebar() {
+      this.volumebarHidden = false;
+    },
+    hideVolumeBar() {
+      this.volumebarHidden = true;
+    },
+    toggleMute: function() {
+      this.$store.commit(mutationTypes.MUTE_AUDIO);
+      this.alertIconSelectorMute = (this.alertIconSelectorMute + 1) % 2;
+      this.popAlert(this.alertIconSelectorMute);
+    },
     addKeypressListenerToWindow(event) {
       console.log(event);
-      let keyCode = event.keyCode || event.which;
+      let keyCode = event.which || event.keyCode;
+      console.log(keyCode);
       switch(keyCode) {
         //mute audio
         case KeyPress.M:
         case KeyPress.m: 
           this.$store.commit(mutationTypes.MUTE_AUDIO);
-          this.alertIconSelector = (this.alertIconSelector + 1 ) % this.alertIcons.length;
-          this.alert = true;
-          // this.alert = false;
-          window.clearTimeout(this.timeoutID);
-          this.timeoutID =  setTimeout(() => this.alert = false, 2000);
+          this.alertIconSelectorMute = (this.alertIconSelectorMute + 1) % 2;
+          this.popAlert(this.alertIconSelectorMute);
           break;
         case KeyPress.SPACE_BAR:
+          console.log('matched');
           this.playPauseAudio();
       }
       
@@ -138,6 +175,26 @@ export default {
       // this.seek = !this.seek;
       // console.log('et')
     },
+    getOffsetYOfVolumebar: function(event) {
+      let boundinClientRect = this.$refs.volumebar.getBoundingClientRect();
+      this.volumebarStartPosition = boundinClientRect.bottom;
+      this.volumebarEndPosition =boundinClientRect.top;
+      console.log(this.volumebarEndPosition - this.volumebarStartPosition);
+      let fraction = (event.y - this.volumebarStartPosition) / (this.volumebarEndPosition - this.volumebarStartPosition);
+      
+      this.seekVolumeTo(fraction * 100);
+      this.enableDragToVolumebar();
+      this.setVolume(fraction);
+    },
+    seekVolumeTo: function(percentage) {
+      this.volumebarHeight = percentage;
+    },
+    enableDragToVolumebar: function() {
+      this.isVolumebarDraggable = true;
+    },
+    disableDragToVolumebar: function() {
+      this.isVolumebarDraggable = false;
+    },
     addMouseUpListener: function() {
       // console.log("mouseup listener");
       if (this.draggable ) {
@@ -149,6 +206,9 @@ export default {
         // disable drag
         setTimeout(this.disableDrag, 40) ;
         // this.playingStarted? this.setTimer() : null;
+      } else if(this.isVolumebarDraggable) {
+        console.log('off volume drag');
+        this.disableDragToVolumebar();
       }
       // this.removeMouseMoveListener();
     },
@@ -167,7 +227,16 @@ export default {
       if( this.draggable) {
         // console.log('subsequent seekbar UI update');
         this.seekTo( (event.x - this.seekbarStartPosition) / (this.seekbarEndPosition - this.seekbarStartPosition) * 100);
+      } else if(this.isVolumebarDraggable) {
+        let fraction = (event.y - this.volumebarStartPosition) / (this.volumebarEndPosition - this.volumebarStartPosition);
+        this.seekVolumeTo(fraction * 100);
+        this.setVolume(fraction);
       }
+    },
+    setVolume: function(fraction) {
+      let volume = fraction > 0 ?  (fraction < 1? fraction : 1): 0;
+      this.$store.state.audioPlayer.volume = volume;
+      // this.volumeIconsSelector = Math.ceil(volume * (this.volumeIcons.length - 1));
     },
     seekTo: function(percentage) {
       this.percentageForAudio = percentage;
@@ -176,9 +245,18 @@ export default {
     },
     setPlayIcon: function() {
       this.IconSelector = 0;
+      this.popAlert(2);
     },
     setPauseIcon: function() {
       this.IconSelector = 1;
+      this.popAlert(3);
+    },
+    popAlert: function(value) {
+      this.alertIconSelector = value;
+      this.alert = true;
+      // this.alert = false;
+      window.clearTimeout(this.timeoutID);
+      this.timeoutID =  setTimeout(() => this.alert = false, 2000);
     },
     playPauseAudio: function() {
       let audio = this.$store.state.audioPlayer;
@@ -296,7 +374,7 @@ export default {
   justify-self: center;
 }
 
-.controls > .v-icon {
+.controls  .v-icon {
   cursor: pointer;
   font-size: 2.2rem;
   color: #dddddd;
@@ -309,12 +387,61 @@ export default {
   color: #839198 !important;
 }
 
-.controls > .v-icon:hover {
+.controls  .v-icon:hover {
   color: #adadad;
 }
 
 .time {
   color: white;
   align-self: center;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.volumeBar-container {
+  position: absolute;
+  width: 2.8rem;
+  height: 11rem;
+  background-color: #3f3f3f;
+  margin-top: -13.7rem;
+  border-radius: 0.5rem;
+}
+
+.volumeBar {
+  width: 4px;
+  height: 80%;
+  margin: auto;
+  border-radius: 2px;
+  background-color: #839198;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  cursor: pointer;
+}
+
+.volumeBar-seeker {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  background-color: #37718c;
+  border-radius: 2px;
+}
+
+.volumeBarTip {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+  position: absolute;
+  margin-left: -5px;
+  cursor: pointer;
+}
+
+.volume-icon {
+  margin: 0;
 }
 </style>

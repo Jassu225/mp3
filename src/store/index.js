@@ -24,7 +24,10 @@ const store = new Vuex.Store({
       // seemed unnecessary to declare here
       // playMode: playModes.LOOP_ALL,
       seekablebarWidth: 0,
-      musicControls: null
+      musicControls: null,
+      audioVolumes: [0, 1],
+      // must not change
+      audioVolumesSelector: 1
     },
     mutations: {
       // to toggle side-navbar
@@ -95,7 +98,12 @@ const store = new Vuex.Store({
       // -----------------------------------------------------------------
       // key controls
       [mutationTypes.MUTE_AUDIO] (state) {
-        state.audioPlayer.muted = !state.audioPlayer.muted;
+        // store current volume
+        state.audioVolumes[state.audioVolumesSelector] = state.audioPlayer.volume;
+        // increment selector
+        state.audioVolumesSelector = (state.audioVolumesSelector + 1) % state.audioVolumes.length;
+        // mute / unmute
+        state.audioPlayer.volume = state.audioVolumes[state.audioVolumesSelector];
       }
     },
     actions: {

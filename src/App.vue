@@ -36,12 +36,14 @@
         @pause="audioPaused"
         @play="audioPlaying"
         @timeupdate="updateSeekbarWidthAndTime"
+        @volumechange="audioVolumeChanged"
       ></video>
       <music-controls 
         :seekablebarWidth="seekablebarWidth"
         :updateAudioTime="updateAudioTime"
         :currentTime="currentTime"
         :duration="duration"
+        :audioVolume="audioVolume"
       ></music-controls>
     </div>
   </v-app>
@@ -68,7 +70,8 @@ export default {
       seekablebarWidth: 0,
       currentTime: 0,
       duration: 0,
-      uploadingFiles: []
+      uploadingFiles: [],
+      audioVolume: 1
     }
   },
   computed: {
@@ -181,6 +184,9 @@ export default {
 
       // set play icon in music-controls
       this.$store.state.musicControls.setPauseIcon();
+    },
+    audioVolumeChanged() {
+      this.audioVolume = this.$store.state.audioPlayer.volume;
     },
     updateSeekbarWidthAndTime() {
       let audio = this.$store.state.audioPlayer;

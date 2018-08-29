@@ -54,6 +54,9 @@ const AVIcons = {
     shuffle: 'shuffle',
     mute: 'volume_off',
     unmute: 'volume_up',
+    volumeUp: 'volume_up',
+    volumeDown: 'volume_down',
+    volumeOff: 'volume_off',
     // playMode Icons
     loopAll: 'loop',
     onceAll: 'trending_flat',
