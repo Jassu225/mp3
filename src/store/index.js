@@ -17,6 +17,7 @@ const store = new Vuex.Store({
       Tabs: true,
       // ---------------
       songs: [],
+      albums: [],
       audioPlayer: null,
       previousSelection: null,
       selectedSong: null,
@@ -109,13 +110,24 @@ const store = new Vuex.Store({
     actions: {
       async [actionTypes.GET_SONGS_FROM_SERVER] ({state}) {
         let data = await APIHandler.getSongs();
-        // console.log(data);
         state.songs = JSON.parse(data).songs;
+        console.log(state.songs);
         playlists.init(state.songs);
         // console.log(data.songs[0].album);
       },
       async [actionTypes.GET_SONGS] ({ commit, state, dispatch }) {
         await dispatch(actionTypes.GET_SONGS_FROM_SERVER)
+      },
+      async [actionTypes.GET_ALBUMS_FROM_SERVER]({state}) {
+        let data = await APIHandler.getAlbums();
+        
+        state.albums = JSON.parse(data).albums;
+        console.log(state.albums);
+        // playlists.init(state.songs);
+        // console.log(data.songs[0].album);
+      },
+      async [actionTypes.GET_ALBUMS] ({dispatch}) {
+        await dispatch(actionTypes.GET_ALBUMS_FROM_SERVER);
       }
     }
 })

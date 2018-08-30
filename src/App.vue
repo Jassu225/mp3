@@ -98,6 +98,7 @@ export default {
   },
   mounted: function() {
     this.$store.dispatch(actionTypes.GET_SONGS);
+    this.$store.dispatch(actionTypes.GET_ALBUMS);
     this.$store.commit(mutationTypes.CREATE_AUDIO_PLAYER_REFERENCE, {
       audioPlayerReference: this.$refs.audioPlayer
     });

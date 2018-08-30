@@ -29,7 +29,9 @@ const mutationTypes = {
 
 const actionTypes = {
     GET_SONGS: 'getSongs',
-    GET_SONGS_FROM_SERVER: 'getSongsFromServer'
+    GET_SONGS_FROM_SERVER: 'getSongsFromServer',
+    GET_ALBUMS: 'getAlbums',
+    GET_ALBUMS_FROM_SERVER: 'getaAlbumsFromServer',
 }
 
 const AVIcons = {

@@ -36,4 +36,8 @@ export default class APIHandler {
     static async getSongs() {
         return await this.httpRequest(config.getSongsURL);
     }
+    
+    static async getAlbums() {
+        return await this.httpRequest(config.getAlbumsURL);
+    }
 }

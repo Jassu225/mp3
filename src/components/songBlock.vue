@@ -88,6 +88,9 @@ export default {
         'playOrPause',
         'loadAudio'
     ],
+    mounted: function() {
+        console.log(song);
+    },
     computed: {
         selected: function() {
             let selectedSong = this.$store.state.selectedSong;

@@ -9,12 +9,18 @@
             <songs-container></songs-container>
           </v-card>
         </v-tab-item>
+        <v-tab-item class="full-height overflow">
+          <v-card flat color="transparent" dark>
+            <album-container></album-container>
+          </v-card>
+        </v-tab-item>
       </v-tabs-items>
     </div>
 </template>
 
 <script>
 import songsContainer from './songsContainer.vue';
+import albumContainer from './albumContainer.vue';
 
 
 import {stateProps, mutationTypes} from '../assets/js/constants';
@@ -22,7 +28,8 @@ import {stateProps, mutationTypes} from '../assets/js/constants';
 
 export default {
     components: {
-        songsContainer
+        songsContainer,
+        albumContainer
     },
     data: function() {
         return {
@@ -70,5 +77,9 @@ export default {
 .position-absolute {
   position: absolute;
 }
+
+/* .tabs {
+    background-color: #111;
+} */
 </style>
 

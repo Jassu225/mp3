@@ -6,6 +6,7 @@ const config = {
     uploadSongURL: `${apiRootURL}/uploadSong`,
     uploadCompleteURL: `${apiRootURL}/uploadComplete`,
     getSongsURL: `${apiRootURL}/getSongs`,
+    getAlbumsURL: `${apiRootURL}/getAlbums`,
     chunkSize: 262144, // 256 KB
     uploadsDir: '/uploads'
 };
