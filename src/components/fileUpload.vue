@@ -158,6 +158,10 @@ export default {
 				this.uploadCanceled(file.name);
 				console.log(event);
 			}, false);
+
+			// compusory for making a CORS request
+			xhr.withCredentials = true;
+			
 			/* Be sure to change the url below to the url of your upload server side script */
 			xhr.open("POST", this.config.uploadSongURL);
 
@@ -177,6 +181,10 @@ export default {
 		xhr.addEventListener("load", (event) => { console.log(event); });
 		xhr.addEventListener("error", (event) => { console.log(event); });
 		xhr.addEventListener("abort", (event) => { console.log(event); });
+
+		// compusory for making a CORS request
+		xhr.withCredentials = true;
+		
 		xhr.open("POST", this.config.uploadCompleteURL);
 
 		// add cors headers
