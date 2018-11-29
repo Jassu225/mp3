@@ -6,7 +6,7 @@ const result = dotenv.config();
 
 console.log(result.parsed)
 
-const apiRootURL = 'http://localhost:7991';
+const apiRootURL = 'https://music-rest-api.herokuapp.com/';
 if(process.env.ENVIRONMENT == "PRODUCTION") {
     apiRootURL = 'https://music-rest-api.herokuapp.com/';
 }
