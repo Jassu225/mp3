@@ -158,6 +158,10 @@ export default {
 				this.uploadCanceled(file.name);
 				console.log(event);
 			}, false);
+			// add cors headers
+			xhr.setRequestHeader('Access-Control-Allow-Origin','*');
+			xhr.setRequestHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
+			xhr.setRequestHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
 			/* Be sure to change the url below to the url of your upload server side script */
 			xhr.open("POST", this.config.uploadSongURL);
 			let strigifiedChunk = JSON.stringify(chunk);
@@ -171,6 +175,11 @@ export default {
 		xhr.addEventListener("load", (event) => { console.log(event); });
 		xhr.addEventListener("error", (event) => { console.log(event); });
 		xhr.addEventListener("abort", (event) => { console.log(event); });
+		// add cors headers
+		xhr.setRequestHeader('Access-Control-Allow-Origin','*');
+		xhr.setRequestHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
+		xhr.setRequestHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
+			
 		xhr.open("POST", this.config.uploadCompleteURL);
 		xhr.send(JSON.stringify({
 			name: fileName
