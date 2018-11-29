@@ -8,7 +8,7 @@
 
 let apiRootURL = 'http://localhost:7991';
 if(process.env.NODE_ENV == "production") {
-    apiRootURL = 'https://music-rest-api.herokuapp.com/';
+    apiRootURL = 'https://music-rest-api.herokuapp.com';
 }
 
 console.log(apiRootURL);
