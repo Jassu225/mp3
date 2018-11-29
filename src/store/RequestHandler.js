@@ -27,9 +27,9 @@ class XHRHandler {
             xhr.open("GET", url);
 
             // add cors headers
-			xhr.setRequestHeader('Access-Control-Allow-Origin','*');
-			xhr.setRequestHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
-            xhr.setRequestHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
+			// xhr.setRequestHeader('Access-Control-Allow-Origin','*');
+			// xhr.setRequestHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
+            // xhr.setRequestHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
             
             xhr.send();
         });

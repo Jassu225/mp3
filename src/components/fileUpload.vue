@@ -162,9 +162,9 @@ export default {
 			xhr.open("POST", this.config.uploadSongURL);
 
 			// add cors headers
-			xhr.setRequestHeader('Access-Control-Allow-Origin','*');
-			xhr.setRequestHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
-			xhr.setRequestHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
+			// xhr.setRequestHeader('Access-Control-Allow-Origin','*');
+			// xhr.setRequestHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
+			// xhr.setRequestHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
 
 			let strigifiedChunk = JSON.stringify(chunk);
 			// console.log(strigifiedFile);
@@ -180,10 +180,10 @@ export default {
 		xhr.open("POST", this.config.uploadCompleteURL);
 
 		// add cors headers
-		xhr.setRequestHeader('Access-Control-Allow-Origin','*');
-		xhr.setRequestHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
-		xhr.setRequestHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
-		
+		// xhr.setRequestHeader('Access-Control-Allow-Origin','*');
+		// xhr.setRequestHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
+		// xhr.setRequestHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
+
 		xhr.send(JSON.stringify({
 			name: fileName
 		}));
