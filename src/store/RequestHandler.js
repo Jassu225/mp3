@@ -22,13 +22,15 @@ class XHRHandler {
                 // if(AbortEventCB) AbortEventCB(event);
                 reject(xhr.statusText);
             }, false);
-            // add cors headers
-			xhr.setRequestHeader('Access-Control-Allow-Origin','*');
-			xhr.setRequestHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
-			xhr.setRequestHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
 			
             /* Be sure to change the url below to the url of your upload server side script */
             xhr.open("GET", url);
+
+            // add cors headers
+			xhr.setRequestHeader('Access-Control-Allow-Origin','*');
+			xhr.setRequestHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
+            xhr.setRequestHeader('Access-Control-Allow-Headers', "Origin, X-Requested-With, Content-Type, Accept");
+            
             xhr.send();
         });
     }
