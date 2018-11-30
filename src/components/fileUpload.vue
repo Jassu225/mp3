@@ -105,11 +105,12 @@ export default {
 
 			this.addToUploadingFiles([file]);
 			// console.log('event');
-			// Ignoring First 23 chars b'coz
+			// Ignoring First indexOf(',') + 1 chars b'coz
 			// FileReader.readAsDataURL(blob) prefixes the file content with
-			// "data:audio/mpeg;base64," tag which represents that the data
+			// "data:audio/mpeg;base64,"/ "data:audio/mp3;base64," tag which represents that the data
 			// is audio ecoded in base64 format
-			this.chunkFile(file, 23);
+			this.chunkFile(file, (file.base64String).indexOf(',') + 1);
+			// console.log((file.base64String).slice(0, 23));
 		}
 		reader.readAsDataURL(file);
 		
@@ -122,7 +123,9 @@ export default {
 			base64Size: file.base64Size,
 			type: file.type,
 			base64String: (file.base64String).slice(start, end),
-			isFirst: file.isFirst
+			isFirst: file.isFirst,
+			chunkStart: start,
+			chunkEnd: end
 		}
 		this.uploadChunk(chunk, start, end, file);
 	},
@@ -138,7 +141,7 @@ export default {
 			xhr.addEventListener("load", (event) => {
 				// var size_done = start + this.config.chunkSize;
                 // var percent_done = Math.floor( ( size_done / file.size ) * 100 );
-				if ( end < file.base64Size ) {
+				if ( start < file.base64Size ) {
                     // Update upload progress
                     this.uploadProgress(file.name, end);
 					// More to upload, call function recursively
@@ -160,7 +163,7 @@ export default {
 			}, false);
 
 			// compusory for making a CORS request
-			xhr.withCredentials = true;
+			// xhr.withCredentials = true;
 			
 			/* Be sure to change the url below to the url of your upload server side script */
 			xhr.open("POST", this.config.uploadSongURL);
@@ -183,7 +186,7 @@ export default {
 		xhr.addEventListener("abort", (event) => { console.log(event); });
 
 		// compusory for making a CORS request
-		xhr.withCredentials = true;
+		// xhr.withCredentials = true;
 		
 		xhr.open("POST", this.config.uploadCompleteURL);
 

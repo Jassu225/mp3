@@ -210,8 +210,7 @@ export default {
 
 <style>
 html, body {
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto !important;
   height: 100%;
   width: 100%;
   -webkit-user-select: none; /* Safari 3.1+ */

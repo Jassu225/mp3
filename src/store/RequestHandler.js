@@ -24,7 +24,7 @@ class XHRHandler {
             }, false);
 
             // compusory for making a CORS request
-            xhr.withCredentials = true;
+            // xhr.withCredentials = true;
 			
             /* Be sure to change the url below to the url of your upload server side script */
             xhr.open("GET", url);

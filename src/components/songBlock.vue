@@ -184,7 +184,7 @@ export default {
     box-sizing: border-box;
     color: #ddd;
     border-bottom: 0.1px solid #504d4d;
-    margin: 0 1rem;
+    /* margin: 0 1rem; */
 }
 
 .song-block:hover {
