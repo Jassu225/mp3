@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+// const MinifyPlugin = require("babel-minify-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -70,16 +72,44 @@ if (process.env.NODE_ENV === 'production') {
         NODE_ENV: '"production"'
       }
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
-      }
-    }),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   sourceMap: true,
+    //   compress: {
+    //     warnings: false
+    //   }
+    // }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     })
   ]);
 
-  module.exports.mode = 'production'
+  module.exports.mode = 'production';
+  // module.exports.optimization = {
+  //   minimizer: [
+  //     // we specify a custom UglifyJsPlugin here to get source maps in production
+  //     new UglifyJsPlugin({
+  //       cache: true,
+  //       parallel: true,
+  //       uglifyOptions: {
+  //         compress: false,
+  //         // ecma: 5,
+  //         mangle: true
+  //       },
+  //       sourceMap: true
+  //     })
+  //   ]
+  // };
+  module.exports.optimization = {
+    minimizer: [
+      new TerserPlugin({
+        sourceMap: true,
+        cache: true,
+        parallel: true,
+        terserOptions: {
+          compress: true,
+          mangle: true
+        }
+      })
+    ]
+  };
 }
