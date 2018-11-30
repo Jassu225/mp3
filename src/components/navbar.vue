@@ -91,7 +91,8 @@ export default {
 }
 
 .navColor {
-  background-color: #21242e !important;
+  /* background-color: #21242e !important; */
+  background-color: #1c1c1c !important;
 }
 
 .v-tabs__bar {

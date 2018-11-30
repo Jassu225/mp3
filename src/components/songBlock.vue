@@ -224,11 +224,12 @@ export default {
 }
 
 .song-block.selected {
-    background-color: #414141;
+    /* background-color: #414141; */
+    background-color: #232630;
 }
 
 .song-block.selected > .song-title{
     color: #e72c30;
-    font-weight: 600;
+    font-weight: 500;
 }
 </style>
