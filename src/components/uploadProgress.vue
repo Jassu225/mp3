@@ -1,5 +1,5 @@
 <template>
-    <v-card color="transparent" dark>
+    <v-card color="transparent" dark class="full-height" style="{overflow: auto;}">
         <v-list v-if="uploadingFiles.length">
             <transition-group name="fade">
                 <v-list-tile v-for="(file, index) in uploadingFiles" :key="index">

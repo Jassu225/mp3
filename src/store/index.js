@@ -115,7 +115,7 @@ const store = new Vuex.Store({
         playlists.init(state.songs);
         // console.log(data.songs[0].album);
       },
-      async [actionTypes.GET_SONGS] ({ commit, state, dispatch }) {
+      async [actionTypes.GET_SONGS] ({ dispatch }) {
         await dispatch(actionTypes.GET_SONGS_FROM_SERVER)
       },
       async [actionTypes.GET_ALBUMS_FROM_SERVER]({state}) {

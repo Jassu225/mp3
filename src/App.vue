@@ -218,6 +218,24 @@ html, body {
   -ms-user-select: none; /* IE 10+ */
   user-select: none;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  border: 4px solid #111;
+  background-color: rgba(0,0,0,0.4);
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  border: 3px solid #111;
+  background-color: #666;
+  background-clip: content-box;
+}
+
 #app {
   font-family: 'Open Sans','Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -254,7 +272,8 @@ a {
 }
 
 .root-grid {
-  grid-template-rows:  96px calc(100% - 6rem - 96px) 6rem;
+  /* grid-template-rows:  96px calc(100% - 6rem - 96px) 6rem; */
+  grid-template-rows:  96px 1fr 6rem;
 }
 
 .full-height {
